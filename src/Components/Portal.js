@@ -4,11 +4,11 @@ import Modal from "./Modal";
 const Wrapper = styledComponents.div`
     display: flex;
     height: 100vh;
-    background:navy;
+    background:#800080;
     
     `;
 const LeftSection = styledComponents.div`
-    background: navy;
+    background: #800080;
     color: #fff;
     min-width:15%;
     margin-top:3%;
@@ -31,7 +31,7 @@ const List = styledComponents.li`
     :hover{
         display: block;
         background: #ccc;
-        color: navy;
+        color: #800080;
         border-radius: 50px 0px 0px 50px;
         width: 100%;
         cursor: pointer;
@@ -48,7 +48,7 @@ const Table = styledComponents.table`
 
   `;
 const Thead = styledComponents.th`
-   color: navy;
+   color: #800080;
   `;
 const AddButton = styledComponents.button`
     border: none;
@@ -61,7 +61,7 @@ const AddButton = styledComponents.button`
     margin-bottom:2%;
     :hover{
       cursor: pointer;
-      color: navy;
+      color: #800080;
     }
 `;
 const Button = styledComponents.button`
@@ -70,27 +70,25 @@ const Button = styledComponents.button`
     height: 50px;
     color: #fff;
     font-weight: bold;
-    background: navy;
+    background: #800080;
     border-radius: 7px;
     font-size: 15px;
     margin-bottom:2%;
     :hover{
       cursor: pointer;
+      background: #433ef1;
+
     }
 `;
 
-const ActionButton = styledComponents.button`
-width: 70px; 
-height: 70px
-font-weight: bold;
-border: none;
+const ActionIcon = styledComponents.i`
 padding: 3%;
-background: navy;
-color: #fff;
-border-radius: 7px;
+color: #000;
 font-size: 15px;
 :hover{
 cursor: pointer;
+color: #800080;
+transition: 0.3s ease all;
 }
 `;
 
@@ -124,20 +122,20 @@ const Input = styledComponents.input`
     padding: 3%;
     display: block;
     :hover{
-      border: 2px solid navy;
+      border: 2px solid #800080;
       ::placeholder{
-        color: navy;
+        color: #800080;
       }
     }
    
 `;
 const Label = styledComponents.label`
   font-weight: bold;
-  color: navy;
+  color: #800080;
 `;
 const AddAgency = styledComponents.span`
     text-align: center;
-    color: navy;
+    color: #800080;
     font-weight: bold;
     font-size: 20px;
 `;
@@ -151,15 +149,25 @@ const SubmitButton = styledComponents.button`
     width:100%;
     color: white;
     margin-top: 3%;
-    background: navy;
+    background: #800080;
     height: 30px;
     border:none;
     border-radius: 10px;
     cursor: pointer;
     :hover{
       transition: 0.3s ease all;
-      background: #478aaf; 
+      background: #433ef1; 
     }
+
+`;
+
+const Close = styledComponents.i`
+font-size: 20px;
+cursor: pointer;
+:hover{
+    color: #800080;
+    transition: 0.3s ease all;
+}
 
 `;
 const Portal = () => {
@@ -184,10 +192,13 @@ const Portal = () => {
     add: false,
     update: false,
   });
+  const [sortBy, setSortBy] = React.useState({
+    asc: true,
+  });
 
-  React.useEffect(() => {
-    fetch(
-      "https://api.airtable.com/v0/appLAnzH9mo92cmYc/Table%201?maxRecords=3&view=Grid%20view",
+  const fetchData = async () => {
+    return await fetch(
+      "https://api.airtable.com/v0/appLAnzH9mo92cmYc/Table%201?maxRecords=10&view=Grid%20view",
       {
         method: "GET",
         headers: {
@@ -196,75 +207,48 @@ const Portal = () => {
       }
     )
       .then((res) => res.json())
-      .then((data) => setPortalData(data.records));
-  }, [portalData]);
+      .then((data) => setPortalData(data.records))
+      .catch((err) => console.log(err));
+  };
+  React.useEffect(() => {
+    fetchData();
+  }, []);
+
+  const [page, setPage] = React.useState(1);
+  const [pageData, setPageData] = React.useState({
+    pageSize: portalData.length,
+    maxSize: 100,
+  });
+  const handlePrevious = async () => {
+    setPage((page) => (page === 0 ? 0 : page - 1));
+    if (page !== 1) {
+      return await fetch(
+        `https://api.airtable.com/v0/appLAnzH9mo92cmYc/Table%201?maxRecords=10&view=Grid%20view`
+      );
+    }
+  };
+  const handleNext = async () => {
+    setPage((page) => (page >= pageData.maxSize ? page : page + 1));
+  };
 
   const addAgency = (e) => {
     e.preventDefault();
-    // const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    // if (userData.Name === "") {
-    //   alert("Please add name!");
-    // } else if (userData.Email === "") {
-    //   alert("Please enter your email!");
-    // } else if (!emailRegex.test(userData.Email)) {
-    //   alert("Please enter valid email!");
-    // } else if (userData.Phone === "") {
-    //   alert("Please enter mobile no!");
-    // } else if (userData.Phone.length < 10) {
-    //   alert("Please enter valid mobile number!");
-    // } else if (userData.City === "") {
-    //   alert("Please enter your city!");
-    // } else if (userData.Country === "") {
-    //   alert("Please enter your country!");
-    // } else {
-    fetch("https://api.airtable.com/v0/appLAnzH9mo92cmYc/Table%201", {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer keyORrZt08dnm2627",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        records: [
-          {
-            fields: {
-              Name: userData.Name,
-              Email: userData.Email,
-              Phone: userData.Phone,
-              City: userData.City,
-              Country: userData.Country,
-            },
-          },
-        ],
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => setPortalData([...portalData, ...data]));
-
-    modalRef.current.style.display = "none";
-    // }
-  };
-
-  const deleteAgency = (id) => {
-    fetch(`https://api.airtable.com/v0/appLAnzH9mo92cmYc/Table%201/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: "Bearer keyORrZt08dnm2627",
-      },
-    });
-  };
-
-  const updateAgency = (data) => {
-    setEditData({
-      UName: data.fields.Name,
-      UEmail: data.fields.Email,
-      UPhone: data.fields.Phone,
-      UCity: data.fields.City,
-      UCountry: data.fields.Country,
-    });
-    fetch(
-      `https://api.airtable.com/v0/appLAnzH9mo92cmYc/Table%201/${data.id}`,
-      {
-        method: "PATCH",
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (userData.Name === "") {
+      alert("Please add name!");
+    } else if (userData.Email === "") {
+      alert("Please enter your email!");
+    } else if (!emailRegex.test(userData.Email)) {
+      alert("Please enter valid email!");
+    } else if (userData.Phone === "") {
+      alert("Please enter mobile no!");
+    } else if (userData.City === "") {
+      alert("Please enter your city!");
+    } else if (userData.Country === "") {
+      alert("Please enter your country!");
+    } else {
+      fetch("https://api.airtable.com/v0/appLAnzH9mo92cmYc/Table%201", {
+        method: "POST",
         headers: {
           Authorization: "Bearer keyORrZt08dnm2627",
           "Content-Type": "application/json",
@@ -273,24 +257,74 @@ const Portal = () => {
           records: [
             {
               fields: {
-                Name: editData.UName,
-                Email: editData.UEmail,
-                Phone: editData.UPhone,
-                City: editData.UCity,
-                Country: editData.UCountry,
+                Name: userData.Name,
+                Email: userData.Email,
+                Phone: userData.Phone,
+                City: userData.City,
+                Country: userData.Country,
               },
             },
           ],
         }),
-      }
-    )
-      .then((res) => res.json())
-      .then((data) =>
-        setPortalData((prevData) => {
-          let filteredData = prevData.filter((field) => field.id !== data.id);
-          return filteredData;
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setPortalData([...portalData, ...data]);
+          fetchData();
         })
-      );
+        .catch((err) => console.log(err));
+
+      modalRef.current.style.display = "none";
+      setShowModal({ add: false });
+    }
+  };
+
+  const deleteAgency = (id) => {
+    fetch(`https://api.airtable.com/v0/appLAnzH9mo92cmYc/Table%201/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer keyORrZt08dnm2627",
+      },
+    }).then((res) => res.status === 200 && fetchData());
+  };
+
+  const updateAgencyData = (data) => {
+    setEditData({
+      id: data.id,
+      UName: data.fields.Name,
+      UEmail: data.fields.Email,
+      UPhone: data.fields.Phone,
+      UCity: data.fields.City,
+      UCountry: data.fields.Country,
+    });
+  };
+
+  const updateAgency = (e) => {
+    e.preventDefault();
+    fetch("https://api.airtable.com/v0/appLAnzH9mo92cmYc/Table%201", {
+      method: "PATCH",
+      headers: {
+        Authorization: "Bearer keyORrZt08dnm2627",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        records: [
+          {
+            id: editData.id,
+            fields: {
+              Name: editData.UName,
+              Email: editData.UEmail,
+              Phone: editData.UPhone,
+              City: editData.UCity,
+              Country: editData.UCountry,
+            },
+          },
+        ],
+      }),
+    }).then((res) => res.status === 200 && fetchData());
+
+    modalRef.current.style.display = "none";
+    setShowModal({ update: false });
   };
   const handleModal = () => {
     modalRef.current.style.display = "block";
@@ -313,14 +347,38 @@ const Portal = () => {
       icon: "bi bi-collection-fill",
     },
   ];
-
+  const handleSortBy = async (sort) => {
+    return await fetch(
+      `https://api.airtable.com/v0/appLAnzH9mo92cmYc/Table%201?sort%5B0%5D%5Bfield%5D=${sort}&direction%5D=${
+        sortBy.asc ? "asc" : !sortBy.asc ? "desc" : "asc"
+      }`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer keyORrZt08dnm2627",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setPortalData(data.records);
+      });
+  };
   return (
     <Wrapper>
       <LeftSection>
         <Categories>
           {categories.map((category, i) => {
             return (
-              <List key={i}>
+              <List
+                key={i}
+                style={{
+                  background: category.name === "Agency" ? "#ccc" : "",
+                  color: category.name === "Agency" ? "#800080" : "",
+                  borderRadius:
+                    category.name === "Agency" ? "50px 0px 0px 50px" : "",
+                }}
+              >
                 <Icon className={category.icon}></Icon>
                 {category.name}
               </List>
@@ -354,8 +412,8 @@ const Portal = () => {
         >
           <AddButton
             onClick={() => {
-              setShowModal({ ...showModal, add: true });
-              handleModal();
+              setShowModal({ add: true });
+              setTimeout(() => handleModal(), 0);
             }}
           >
             Add Agency
@@ -369,13 +427,10 @@ const Portal = () => {
                   <span
                     onClick={() => (modalRef.current.style.display = "none")}
                   >
-                    <i
-                      className="bi bi-x-circle-fill"
-                      style={{ fontSize: "15px", cursor: "pointer" }}
-                    ></i>
+                    <Close className="bi bi-x-circle-fill"></Close>
                   </span>
                 </HeaderSection>
-                <hr color="navy" />
+                <hr color="#800080" />
                 <form>
                   <div
                     style={{
@@ -392,6 +447,7 @@ const Portal = () => {
                         onChange={(e) =>
                           setUserData({ ...userData, Name: e.target.value })
                         }
+                        required
                       />
                     </div>
                     <div>
@@ -402,6 +458,7 @@ const Portal = () => {
                         onChange={(e) =>
                           setUserData({ ...userData, Email: e.target.value })
                         }
+                        required
                       />
                     </div>
                     <div>
@@ -412,6 +469,8 @@ const Portal = () => {
                         onChange={(e) =>
                           setUserData({ ...userData, Phone: e.target.value })
                         }
+                        maxLength={10}
+                        required
                       />
                     </div>
                     <div>
@@ -422,6 +481,7 @@ const Portal = () => {
                         onChange={(e) =>
                           setUserData({ ...userData, City: e.target.value })
                         }
+                        required
                       />
                     </div>
                     <div>
@@ -432,6 +492,7 @@ const Portal = () => {
                         onChange={(e) =>
                           setUserData({ ...userData, Country: e.target.value })
                         }
+                        required
                       />
                     </div>
                     <SubmitButton type="submit" onClick={(e) => addAgency(e)}>
@@ -446,8 +507,7 @@ const Portal = () => {
               modalRef={modalRef}
               updateAgency={updateAgency}
               editData={editData}
-              userData={userData}
-              setUserData={setUserData}
+              setEditData={setEditData}
             />
           ) : (
             ""
@@ -455,8 +515,17 @@ const Portal = () => {
           <Table>
             <thead>
               {titles.map((title, i) => (
-                <Thead key={i}>
-                  {title} <i className="bi bi-arrow-up"></i>
+                <Thead
+                  key={i}
+                  onClick={() => {
+                    handleSortBy(title);
+                    setSortBy({ asc: !sortBy.asc });
+                  }}
+                >
+                  {title}{" "}
+                  <i
+                    className={`bi bi-arrow-${sortBy.asc ? "up" : "down"}`}
+                  ></i>
                 </Thead>
               ))}
               <Thead>Action</Thead>
@@ -467,7 +536,7 @@ const Portal = () => {
                   <tr
                     key={field.id}
                     style={{
-                      borderBottom: "1px solid navy",
+                      borderBottom: "1px solid #800080",
                       height: "70px",
                       width: "100%",
                     }}
@@ -479,19 +548,18 @@ const Portal = () => {
                     <td>{field.fields.City}</td>
                     <td>{field.fields.Country}</td>
                     <td>
-                      <ActionButton
+                      <ActionIcon
+                        className="bi bi-pencil-square"
                         onClick={() => {
-                          setShowModal({ ...showModal, update: true });
-                          updateAgency(field);
-                          handleModal();
+                          setShowModal({ update: true });
+                          setTimeout(() => handleModal(), 0);
+                          updateAgencyData(field);
                         }}
-                      >
-                        Edit
-                      </ActionButton>
-                      |
-                      <ActionButton onClick={() => deleteAgency(field.id)}>
-                        Delete
-                      </ActionButton>
+                      ></ActionIcon>
+                      <ActionIcon
+                        className="bi bi-trash"
+                        onClick={() => deleteAgency(field.id)}
+                      ></ActionIcon>
                     </td>
                   </tr>
                 );
@@ -500,7 +568,9 @@ const Portal = () => {
           </Table>
         </div>
         <div style={{ display: "flex", justifyContent: "center" }}>
-          <Button>Previous</Button>
+          <Button disabled={page === 1} onClick={handlePrevious}>
+            Previous
+          </Button>
           <span
             style={{
               display: "flex",
@@ -509,9 +579,9 @@ const Portal = () => {
               height: "50px",
             }}
           >
-            1
+            {page}
           </span>
-          <Button>Next</Button>
+          <Button onClick={handleNext}>Next</Button>
         </div>
       </RightSection>
     </Wrapper>
