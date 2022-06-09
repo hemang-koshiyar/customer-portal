@@ -25,6 +25,7 @@ const Input = styledComponents.input`
     height: 20px;
     width: 93%;
     padding: 5% 5%;
+    margin: 2% auto;
     border: 2px solid #ccc;
     border-radius: 10px;
     padding: 3%;
@@ -49,6 +50,7 @@ cursor: pointer;
 const Label = styledComponents.label`
   font-weight: bold;
   color: #800080;
+  margin-bottom: 1.5%;
 `;
 const UpdateAgency = styledComponents.span`
     text-align: center;
@@ -66,8 +68,9 @@ const UpdateButton = styledComponents.button`
     width:100%;
     color: white;
     margin-top: 3%;
+    font-size: 15px;
     background: #800080;
-    height: 30px;
+    height: 40px;
     border:none;
     border-radius: 10px;
     cursor: pointer;
@@ -76,6 +79,9 @@ const UpdateButton = styledComponents.button`
       background: #433ef1; 
     }
 
+`;
+const InputItems = styledComponents.div`
+margin-bottom: 3%;
 `;
 const Modal = ({ modalRef, updateAgency, editData, setEditData }) => {
   return (
@@ -88,74 +94,66 @@ const Modal = ({ modalRef, updateAgency, editData, setEditData }) => {
             <Close className="bi bi-x-circle-fill"></Close>
           </span>
         </HeaderSection>
-        <hr color="#800080" />
+        <hr color="#800080" style={{marginBottom: "5%"}}/>
         <form>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "space-evenly",
-            }}
-          >
-            <div>
-              <Label>Name</Label>
-              <Input
-                type="text"
-                placeholder="Enter your name"
-                value={editData.UName}
-                onChange={(e) =>
-                  setEditData({ ...editData, UName: e.target.value })
-                }
-              />
-            </div>
-            <div>
-              <Label>Email</Label>
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                value={editData.UEmail}
-                onChange={(e) =>
-                  setEditData({ ...editData, UEmail: e.target.value })
-                }
-              />
-            </div>
-            <div>
-              <Label>Phone</Label>
-              <Input
-                type="tel"
-                placeholder="Enter your phone"
-                value={editData.UPhone}
-                onChange={(e) =>
-                  setEditData({ ...editData, UPhone: e.target.value })
-                }
-              />
-            </div>
-            <div>
-              <Label>City</Label>
-              <Input
-                type="text"
-                placeholder="Enter your city"
-                value={editData.UCity}
-                onChange={(e) =>
-                  setEditData({ ...editData, UCity: e.target.value })
-                }
-              />
-            </div>
-            <div>
-              <Label>Country</Label>
-              <Input
-                type="text"
-                placeholder="Enter your country"
-                value={editData.UCountry}
-                onChange={(e) =>
-                  setEditData({ ...editData, UCountry: e.target.value })
-                }
-              />
-            </div>
-            <UpdateButton type="submit" onClick={(e)=>updateAgency(e)}>
-              Update
-            </UpdateButton>
-          </div>
+          <InputItems >
+            <Label>Name</Label>
+            <Input
+              type="text"
+              placeholder="Enter your name"
+              value={editData.UName}
+              onChange={(e) =>
+                setEditData({ ...editData, UName: e.target.value })
+              }
+            />
+          </InputItems>
+          <InputItems>
+            <Label>Email</Label>
+            <Input
+              type="email"
+              placeholder="Enter your email"
+              value={editData.UEmail}
+              onChange={(e) =>
+                setEditData({ ...editData, UEmail: e.target.value })
+              }
+            />
+          </InputItems>
+          <InputItems>
+            <Label>Phone</Label>
+            <Input
+              type="tel"
+              placeholder="Enter your phone"
+              value={editData.UPhone}
+              onChange={(e) =>
+                setEditData({ ...editData, UPhone: e.target.value })
+              }
+            />
+          </InputItems>
+          <InputItems>
+            <Label>City</Label>
+            <Input
+              type="text"
+              placeholder="Enter your city"
+              value={editData.UCity}
+              onChange={(e) =>
+                setEditData({ ...editData, UCity: e.target.value })
+              }
+            />
+          </InputItems>
+          <InputItems>
+            <Label>Country</Label>
+            <Input
+              type="text"
+              placeholder="Enter your country"
+              value={editData.UCountry}
+              onChange={(e) =>
+                setEditData({ ...editData, UCountry: e.target.value })
+              }
+            />
+          </InputItems>
+          <UpdateButton type="submit" onClick={(e) => updateAgency(e)}>
+            Update
+          </UpdateButton>
         </form>
       </ModalContent>
     </ModalBox>

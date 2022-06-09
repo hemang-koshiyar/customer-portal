@@ -49,6 +49,9 @@ const Table = styledComponents.table`
   `;
 const Thead = styledComponents.th`
    color: #800080;
+   :hover{
+     cursor: pointer;
+   }
   `;
 const AddButton = styledComponents.button`
     border: none;
@@ -84,7 +87,7 @@ const Button = styledComponents.button`
 const ActionIcon = styledComponents.i`
 padding: 3%;
 color: #000;
-font-size: 15px;
+font-size: 25px;
 :hover{
 cursor: pointer;
 color: #800080;
@@ -117,6 +120,7 @@ const Input = styledComponents.input`
     height: 20px;
     width: 93%;
     padding: 5% 5%;
+    margin: 2% auto;
     border: 2px solid #ccc;
     border-radius: 10px;
     padding: 3%;
@@ -132,6 +136,7 @@ const Input = styledComponents.input`
 const Label = styledComponents.label`
   font-weight: bold;
   color: #800080;
+  margin-bottom: 1.5%;
 `;
 const AddAgency = styledComponents.span`
     text-align: center;
@@ -150,7 +155,8 @@ const SubmitButton = styledComponents.button`
     color: white;
     margin-top: 3%;
     background: #800080;
-    height: 30px;
+    font-size: 15px;
+    height: 40px;
     border:none;
     border-radius: 10px;
     cursor: pointer;
@@ -159,6 +165,9 @@ const SubmitButton = styledComponents.button`
       background: #433ef1; 
     }
 
+`;
+const InputItems = styledComponents.div`
+margin-bottom: 3%;
 `;
 
 const Close = styledComponents.i`
@@ -194,10 +203,11 @@ const Portal = () => {
   });
   const [sortBy, setSortBy] = React.useState({
     asc: true,
+    icon: "bi bi-arrow-up",
+    title: "",
   });
-
   const fetchData = async () => {
-    return await fetch(
+    await fetch(
       "https://api.airtable.com/v0/appLAnzH9mo92cmYc/Table%201?maxRecords=10&view=Grid%20view",
       {
         method: "GET",
@@ -207,7 +217,10 @@ const Portal = () => {
       }
     )
       .then((res) => res.json())
-      .then((data) => setPortalData(data.records))
+      .then((data) => {
+        console.log(data);
+        setPortalData(data.records);
+      })
       .catch((err) => console.log(err));
   };
   React.useEffect(() => {
@@ -229,9 +242,13 @@ const Portal = () => {
   };
   const handleNext = async () => {
     setPage((page) => (page >= pageData.maxSize ? page : page + 1));
+    return await fetch(
+      "https://api.airtable.com/v0/appLAnzH9mo92cmYc/Table%201?maxRecords=10&view=Grid%20view"
+    );
   };
 
   const addAgency = (e) => {
+    let currentCount = portalData.length;
     e.preventDefault();
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (userData.Name === "") {
@@ -258,6 +275,7 @@ const Portal = () => {
             {
               fields: {
                 Name: userData.Name,
+                Id: ++currentCount,
                 Email: userData.Email,
                 Phone: userData.Phone,
                 City: userData.City,
@@ -276,6 +294,13 @@ const Portal = () => {
 
       modalRef.current.style.display = "none";
       setShowModal({ add: false });
+      setUserData({
+        Name: "",
+        Email: "",
+        Phone: "",
+        City: "",
+        Country: "",
+      });
     }
   };
 
@@ -348,9 +373,12 @@ const Portal = () => {
     },
   ];
   const handleSortBy = async (sort) => {
+    if (sort === "#") {
+      sort = "Id";
+    }
     return await fetch(
-      `https://api.airtable.com/v0/appLAnzH9mo92cmYc/Table%201?sort%5B0%5D%5Bfield%5D=${sort}&direction%5D=${
-        sortBy.asc ? "asc" : !sortBy.asc ? "desc" : "asc"
+      `https://api.airtable.com/v0/appLAnzH9mo92cmYc/Table%201?sort%5B0%5D%5Bfield%5D=${sort}&sort%5B0%5D%5Bdirection%5D=${
+        sortBy.asc ? "asc" : "desc"
       }`,
       {
         method: "GET",
@@ -430,75 +458,67 @@ const Portal = () => {
                     <Close className="bi bi-x-circle-fill"></Close>
                   </span>
                 </HeaderSection>
-                <hr color="#800080" />
+                <hr color="#800080" style={{ marginBottom: "5%" }} />
                 <form>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "space-evenly",
-                    }}
-                  >
-                    <div>
-                      <Label>Name</Label>
-                      <Input
-                        type="text"
-                        placeholder="Enter your name"
-                        onChange={(e) =>
-                          setUserData({ ...userData, Name: e.target.value })
-                        }
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label>Email</Label>
-                      <Input
-                        type="email"
-                        placeholder="Enter your email"
-                        onChange={(e) =>
-                          setUserData({ ...userData, Email: e.target.value })
-                        }
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label>Phone</Label>
-                      <Input
-                        type="tel"
-                        placeholder="Enter your phone"
-                        onChange={(e) =>
-                          setUserData({ ...userData, Phone: e.target.value })
-                        }
-                        maxLength={10}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label>City</Label>
-                      <Input
-                        type="text"
-                        placeholder="Enter your city"
-                        onChange={(e) =>
-                          setUserData({ ...userData, City: e.target.value })
-                        }
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label>Country</Label>
-                      <Input
-                        type="text"
-                        placeholder="Enter your country"
-                        onChange={(e) =>
-                          setUserData({ ...userData, Country: e.target.value })
-                        }
-                        required
-                      />
-                    </div>
-                    <SubmitButton type="submit" onClick={(e) => addAgency(e)}>
-                      Submit
-                    </SubmitButton>
-                  </div>
+                  <InputItems>
+                    <Label>Name</Label>
+                    <Input
+                      type="text"
+                      placeholder="Enter your name"
+                      onChange={(e) =>
+                        setUserData({ ...userData, Name: e.target.value })
+                      }
+                      required
+                    />
+                  </InputItems>
+                  <InputItems>
+                    <Label>Email</Label>
+                    <Input
+                      type="email"
+                      placeholder="Enter your email"
+                      onChange={(e) =>
+                        setUserData({ ...userData, Email: e.target.value })
+                      }
+                      required
+                    />
+                  </InputItems>
+                  <InputItems>
+                    <Label>Phone</Label>
+                    <Input
+                      type="tel"
+                      placeholder="Enter your phone"
+                      onChange={(e) =>
+                        setUserData({ ...userData, Phone: e.target.value })
+                      }
+                      maxLength={10}
+                      required
+                    />
+                  </InputItems>
+                  <InputItems>
+                    <Label>City</Label>
+                    <Input
+                      type="text"
+                      placeholder="Enter your city"
+                      onChange={(e) =>
+                        setUserData({ ...userData, City: e.target.value })
+                      }
+                      required
+                    />
+                  </InputItems>
+                  <InputItems>
+                    <Label>Country</Label>
+                    <Input
+                      type="text"
+                      placeholder="Enter your country"
+                      onChange={(e) =>
+                        setUserData({ ...userData, Country: e.target.value })
+                      }
+                      required
+                    />
+                  </InputItems>
+                  <SubmitButton type="submit" onClick={(e) => addAgency(e)}>
+                    Submit
+                  </SubmitButton>
                 </form>
               </ModalContent>
             </ModalBox>
@@ -519,19 +539,24 @@ const Portal = () => {
                   key={i}
                   onClick={() => {
                     handleSortBy(title);
-                    setSortBy({ asc: !sortBy.asc });
+                    setSortBy({ asc: !sortBy.asc, title: title });
                   }}
                 >
-                  {title}{" "}
+                  {title}
                   <i
-                    className={`bi bi-arrow-${sortBy.asc ? "up" : "down"}`}
+                    className={
+                      sortBy.icon ||
+                      `bi bi-arrow-${
+                        sortBy.asc && title === sortBy.title ? "down" : "up"
+                      }`
+                    }
                   ></i>
                 </Thead>
               ))}
               <Thead>Action</Thead>
             </thead>
             <tbody>
-              {portalData.map((field, i) => {
+              {portalData.map((field) => {
                 return (
                   <tr
                     key={field.id}
@@ -541,7 +566,7 @@ const Portal = () => {
                       width: "100%",
                     }}
                   >
-                    <td>{i + 1}</td>
+                    <td>{field.fields.Id}</td>
                     <td>{field.fields.Name}</td>
                     <td>{field.fields.Email}</td>
                     <td>{field.fields.Phone}</td>
