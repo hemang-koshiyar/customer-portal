@@ -1,49 +1,81 @@
 import React from "react";
 import styledComponents from "styled-components";
+const InputItems = styledComponents.div`
+margin-bottom: 3%;
+margin-top: 5%;
+`;
+const LoginButton = styledComponents.button`
+    width:100%;
+    background: #433ef1;
+    color: #fff;
+    margin-top: 3%;
+    border: none;
+    font-weight: bold;
+    font-size: 20px;
+    height: 50px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-bottom: 3%;
+    :hover{
+        background: #800080;
+    }
 
-const Login = () => {
-  const Wrapper = styledComponents.div`
-    display: flex;
-    flex-direction: column;
-    justify-content:center;
-    flex-wrap: wrap;
-    align-items:center;
-    height:100vh;
+
+`;
+const Input = styledComponents.input`
+    height: 20px;
+    width: 93%;
+    padding: 5% 5%;
+    margin: 2% auto;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 3%;
+    font-size: 20px;
+    display: block;
+    :hover{
+      border: 2px solid #433ef1;
+      ::placeholder{
+        color: #433ef1;
+        
+      }
+    }
    
-    `;
-    const Content = styledComponents.div`
-    box-shadow: 0 0 5px grey;
-    `;
-  const Header = styledComponents.h1`
-    text-align:center;
-    
-    padding: 1% 3%;
-    `;
-
-  const Input = styledComponents.input`
-  font-size: 18px;
-  padding: 10px;
-  margin: 10px;
-  background: papayawhip;
-  border: none;
-  border-radius: 3px;
-  ::placeholder {
-    color: palevioletred;
-  }
-  `;
+`;
+const Label = styledComponents.label`
+  font-weight: bold;
+  color: #433ef1;
+  font-size: 20px;
+  margin-bottom: 1.5%;
+`;
+const Login = () => {
+  const [loginData, setLoginData] = React.useState({});
   return (
-    <Wrapper>
-      <Content>
-        <Header>Login</Header>
-        <form>
-            <div>
-                
-            </div>
-        </form>
-        <Input type="email" placeholder="Email"></Input>
-        <Input type="password" placeholder="Password"></Input>
-      </Content>
-    </Wrapper>
+    <React.Fragment>
+      <InputItems>
+        <Label>Email</Label>
+        <Input
+          type="email"
+          placeholder="Enter your email"
+          onChange={(e) =>
+            setLoginData({ ...loginData, Email: e.target.value })
+          }
+          required
+        />
+      </InputItems>
+      <InputItems>
+        <Label>Password</Label>
+        <Input
+          type="password"
+          placeholder="Enter your password"
+          onChange={(e) =>
+            setLoginData({ ...loginData, Password: e.target.value })
+          }
+          maxLength={10}
+          required
+        />
+      </InputItems>
+      <LoginButton type="submit">Login</LoginButton>
+    </React.Fragment>
   );
 };
 

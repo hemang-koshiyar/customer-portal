@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import styledComponents from "styled-components";
 import Modal from "./Modal";
+
 const Wrapper = styledComponents.div`
     display: flex;
     height: 100vh;
@@ -47,7 +48,7 @@ const Table = styledComponents.table`
     text-align: center;
 
   `;
-const Thead = styledComponents.th`
+const Th = styledComponents.th`
    color: #800080;
    :hover{
      cursor: pointer;
@@ -82,6 +83,25 @@ const Button = styledComponents.button`
       background: #433ef1;
 
     }
+`;
+
+const Dropdown = styledComponents.select`
+border: none;
+width: 100px;
+text-align: center;
+height: 50px;
+color: #fff;
+padding: 10px;
+font-weight: bold;
+background: #800080;
+border-radius: 0px 10px 10px 0px;
+font-size: 15px;
+margin-bottom:2%;
+:hover{
+  cursor: pointer;
+  background: #433ef1;
+
+}
 `;
 
 const ActionIcon = styledComponents.i`
@@ -177,8 +197,25 @@ cursor: pointer;
     color: #800080;
     transition: 0.3s ease all;
 }
-
 `;
+
+const SearchInput = styledComponents.input`
+width: 300px;
+height: 50px;
+border: none;
+padding: 0 5px;
+font-size: 15px;
+border-radius: 10px 0px 0px 10px;
+::placeholder{
+  padding-left: 9px;
+}
+`;
+
+const SearchDivision = styledComponents.div`
+display: flex;
+justify-content: flex-end;
+`;
+
 const Portal = () => {
   const [portalData, setPortalData] = React.useState([]);
   const modalRef = React.useRef();
@@ -206,9 +243,25 @@ const Portal = () => {
     icon: "bi bi-arrow-up",
     title: "",
   });
+  const [offset, setOffset] = React.useState("");
+  const [searchBy, setSearchBy] = React.useState("Name");
+  const [searchValue, setSearchValue] = React.useState("");
+
+  // React.useEffect(() => {
+  //   searchValue && searchValue !== ""
+  //     ? setPortalData((prevData) =>
+  //         prevData.filter((record) =>
+  //           record.fields[searchBy]
+  //             .toLowerCase()
+  //             .startsWith(searchValue.toLowerCase())
+  //         )
+  //       )
+  //     : setPortalData(portalData);
+  // }, [searchValue]);
+
   const fetchData = async () => {
     await fetch(
-      "https://api.airtable.com/v0/appLAnzH9mo92cmYc/Table%201?maxRecords=10&view=Grid%20view",
+      `https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers?pageSize=5&maxRecords=10&view=Grid%20view`,
       {
         method: "GET",
         headers: {
@@ -218,7 +271,7 @@ const Portal = () => {
     )
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
+        setOffset(data.offset && data.offset);
         setPortalData(data.records);
       })
       .catch((err) => console.log(err));
@@ -233,18 +286,40 @@ const Portal = () => {
     maxSize: 100,
   });
   const handlePrevious = async () => {
-    setPage((page) => (page === 0 ? 0 : page - 1));
+    setPage((page) => (page === 1 ? 1 : page - 1));
     if (page !== 1) {
       return await fetch(
-        `https://api.airtable.com/v0/appLAnzH9mo92cmYc/Table%201?maxRecords=10&view=Grid%20view`
-      );
+        `https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers?offset=${offset}&view=Grid%20view`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer keyORrZt08dnm2627",
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          setPortalData([...data.records]);
+          fetchData();
+        });
     }
   };
   const handleNext = async () => {
     setPage((page) => (page >= pageData.maxSize ? page : page + 1));
     return await fetch(
-      "https://api.airtable.com/v0/appLAnzH9mo92cmYc/Table%201?maxRecords=10&view=Grid%20view"
-    );
+      `https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers?offset=${offset}&view=Grid%20view`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer keyORrZt08dnm2627",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setPortalData([...data.records]);
+        fetchData();
+      });
   };
 
   const addAgency = (e) => {
@@ -264,7 +339,7 @@ const Portal = () => {
     } else if (userData.Country === "") {
       alert("Please enter your country!");
     } else {
-      fetch("https://api.airtable.com/v0/appLAnzH9mo92cmYc/Table%201", {
+      fetch("https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers", {
         method: "POST",
         headers: {
           Authorization: "Bearer keyORrZt08dnm2627",
@@ -305,7 +380,7 @@ const Portal = () => {
   };
 
   const deleteAgency = (id) => {
-    fetch(`https://api.airtable.com/v0/appLAnzH9mo92cmYc/Table%201/${id}`, {
+    fetch(`https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: "Bearer keyORrZt08dnm2627",
@@ -326,7 +401,7 @@ const Portal = () => {
 
   const updateAgency = (e) => {
     e.preventDefault();
-    fetch("https://api.airtable.com/v0/appLAnzH9mo92cmYc/Table%201", {
+    fetch("https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers", {
       method: "PATCH",
       headers: {
         Authorization: "Bearer keyORrZt08dnm2627",
@@ -377,7 +452,7 @@ const Portal = () => {
       sort = "Id";
     }
     return await fetch(
-      `https://api.airtable.com/v0/appLAnzH9mo92cmYc/Table%201?sort%5B0%5D%5Bfield%5D=${sort}&sort%5B0%5D%5Bdirection%5D=${
+      `https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers?sort%5B0%5D%5Bfield%5D=${sort}&sort%5B0%5D%5Bdirection%5D=${
         sortBy.asc ? "asc" : "desc"
       }`,
       {
@@ -418,14 +493,37 @@ const Portal = () => {
         <div
           style={{
             display: "flex",
-            justifyContent: "flex-end",
+            justifyContent: "space-between",
             height: "40px",
             alignItems: "center",
-            margin: "1% 4%",
+            margin: "3% 4%",
           }}
         >
-          <i className="bi bi-person-circle" style={{ fontSize: "30px" }}></i>
-          <span style={{ paddingLeft: "0.5%" }}>User</span>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-start",
+              alignItems: "center",
+            }}
+          >
+            <i className="bi bi-person-circle" style={{ fontSize: "50px" }}></i>
+            <span style={{ paddingLeft: "20%", fontSize: "15pt" }}>User</span>
+          </div>
+          <SearchDivision>
+            <SearchInput
+              type="text"
+              placeholder={`Search By ${searchBy}`}
+              onChange={(e) => {
+                setSearchValue(e.target.value);
+              }}
+            />
+            <Dropdown onClick={(e) => setSearchBy(e.target.value)}>
+              <option value="Name">Name</option>
+              <option value="Email">Email</option>
+              <option value="City">City</option>
+              <option value="Country">Country</option>
+            </Dropdown>
+          </SearchDivision>
         </div>
         <div
           style={{
@@ -535,7 +633,7 @@ const Portal = () => {
           <Table>
             <thead>
               {titles.map((title, i) => (
-                <Thead
+                <Th
                   key={i}
                   onClick={() => {
                     handleSortBy(title);
@@ -551,51 +649,89 @@ const Portal = () => {
                       }`
                     }
                   ></i>
-                </Thead>
+                </Th>
               ))}
-              <Thead>Action</Thead>
+              <Th>Action</Th>
             </thead>
             <tbody>
-              {portalData.map((field) => {
-                return (
-                  <tr
-                    key={field.id}
-                    style={{
-                      borderBottom: "1px solid #800080",
-                      height: "70px",
-                      width: "100%",
-                    }}
-                  >
-                    <td>{field.fields.Id}</td>
-                    <td>{field.fields.Name}</td>
-                    <td>{field.fields.Email}</td>
-                    <td>{field.fields.Phone}</td>
-                    <td>{field.fields.City}</td>
-                    <td>{field.fields.Country}</td>
-                    <td>
-                      <ActionIcon
-                        className="bi bi-pencil-square"
-                        onClick={() => {
-                          setShowModal({ update: true });
-                          setTimeout(() => handleModal(), 0);
-                          updateAgencyData(field);
+              {searchValue && searchValue !== ""
+                ? portalData
+                    .filter((record) => {
+                      return record.fields[searchBy]
+                        .toLowerCase()
+                        .startsWith(searchValue.toLowerCase());
+                    })
+                    .map((field) => {
+                      return (
+                        <tr
+                          key={field.id}
+                          style={{
+                            borderBottom: "1px solid #800080",
+                            height: "70px",
+                            width: "100%",
+                          }}
+                        >
+                          <td>{field.fields.Id}</td>
+                          <td>{field.fields.Name}</td>
+                          <td>{field.fields.Email}</td>
+                          <td>{field.fields.Phone}</td>
+                          <td>{field.fields.City}</td>
+                          <td>{field.fields.Country}</td>
+                          <td>
+                            <ActionIcon
+                              className="bi bi-pencil-square"
+                              onClick={() => {
+                                setShowModal({ update: true });
+                                setTimeout(() => handleModal(), 0);
+                                updateAgencyData(field);
+                              }}
+                            ></ActionIcon>
+                            <ActionIcon
+                              className="bi bi-trash"
+                              onClick={() => deleteAgency(field.id)}
+                            ></ActionIcon>
+                          </td>
+                        </tr>
+                      );
+                    })
+                : portalData.map((field) => {
+                    return (
+                      <tr
+                        key={field.id}
+                        style={{
+                          borderBottom: "1px solid #800080",
+                          height: "70px",
+                          width: "100%",
                         }}
-                      ></ActionIcon>
-                      <ActionIcon
-                        className="bi bi-trash"
-                        onClick={() => deleteAgency(field.id)}
-                      ></ActionIcon>
-                    </td>
-                  </tr>
-                );
-              })}
+                      >
+                        <td>{field.fields.Id}</td>
+                        <td>{field.fields.Name}</td>
+                        <td>{field.fields.Email}</td>
+                        <td>{field.fields.Phone}</td>
+                        <td>{field.fields.City}</td>
+                        <td>{field.fields.Country}</td>
+                        <td>
+                          <ActionIcon
+                            className="bi bi-pencil-square"
+                            onClick={() => {
+                              setShowModal({ update: true });
+                              setTimeout(() => handleModal(), 0);
+                              updateAgencyData(field);
+                            }}
+                          ></ActionIcon>
+                          <ActionIcon
+                            className="bi bi-trash"
+                            onClick={() => deleteAgency(field.id)}
+                          ></ActionIcon>
+                        </td>
+                      </tr>
+                    );
+                  })}
             </tbody>
           </Table>
         </div>
         <div style={{ display: "flex", justifyContent: "center" }}>
-          <Button disabled={page === 1} onClick={handlePrevious}>
-            Previous
-          </Button>
+          <Button onClick={handlePrevious}>Previous</Button>
           <span
             style={{
               display: "flex",

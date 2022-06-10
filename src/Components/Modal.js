@@ -96,7 +96,7 @@ const Modal = ({ modalRef, updateAgency, editData, setEditData }) => {
         </HeaderSection>
         <hr color="#800080" style={{marginBottom: "5%"}}/>
         <form>
-          <InputItems >
+          <InputItems>
             <Label>Name</Label>
             <Input
               type="text"
