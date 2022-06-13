@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { debounce } from "lodash";
+import React from "react";
 import styledComponents from "styled-components";
 import Modal from "./Modal";
 
@@ -243,25 +244,27 @@ const Portal = () => {
     icon: "bi bi-arrow-up",
     title: "",
   });
-  const [offset, setOffset] = React.useState("");
+
   const [searchBy, setSearchBy] = React.useState("Name");
   const [searchValue, setSearchValue] = React.useState("");
+  const [currentPage, setCurrentPage] = React.useState(1);
 
-  // React.useEffect(() => {
-  //   searchValue && searchValue !== ""
-  //     ? setPortalData((prevData) =>
-  //         prevData.filter((record) =>
-  //           record.fields[searchBy]
-  //             .toLowerCase()
-  //             .startsWith(searchValue.toLowerCase())
-  //         )
-  //       )
-  //     : setPortalData(portalData);
-  // }, [searchValue]);
+  const [showPerPage] = React.useState(4);
+  const [pagination, setPagination] = React.useState({
+    startIndex: 0,
+    endIndex: showPerPage,
+  });
+  const onPaginationChange = (start, end) => {
+    setPagination({ startIndex: start, endIndex: end });
+  };
+  React.useEffect(() => {
+    const value = showPerPage * currentPage;
+    onPaginationChange(value - showPerPage, value);
+  }, [currentPage]);
 
   const fetchData = async () => {
-    await fetch(
-      `https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers?pageSize=5&maxRecords=10&view=Grid%20view`,
+    return await fetch(
+      `https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers?view=Grid%20view`,
       {
         method: "GET",
         headers: {
@@ -271,59 +274,24 @@ const Portal = () => {
     )
       .then((res) => res.json())
       .then((data) => {
-        setOffset(data.offset && data.offset);
         setPortalData(data.records);
       })
       .catch((err) => console.log(err));
   };
+
   React.useEffect(() => {
     fetchData();
   }, []);
 
-  const [page, setPage] = React.useState(1);
-  const [pageData, setPageData] = React.useState({
-    pageSize: portalData.length,
-    maxSize: 100,
-  });
-  const handlePrevious = async () => {
-    setPage((page) => (page === 1 ? 1 : page - 1));
-    if (page !== 1) {
-      return await fetch(
-        `https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers?offset=${offset}&view=Grid%20view`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: "Bearer keyORrZt08dnm2627",
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          setPortalData([...data.records]);
-          fetchData();
-        });
-    }
+  const handlePrevious = () => {
+    setCurrentPage((currentPage) => currentPage - 1);
   };
-  const handleNext = async () => {
-    setPage((page) => (page >= pageData.maxSize ? page : page + 1));
-    return await fetch(
-      `https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers?offset=${offset}&view=Grid%20view`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer keyORrZt08dnm2627",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        setPortalData([...data.records]);
-        fetchData();
-      });
+  const handleNext = () => {
+    setCurrentPage((currentPage) => currentPage + 1);
   };
-
+  let length = portalData.length;
   const addAgency = (e) => {
-    let currentCount = portalData.length;
+    length++;
     e.preventDefault();
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (userData.Name === "") {
@@ -350,7 +318,7 @@ const Portal = () => {
             {
               fields: {
                 Name: userData.Name,
-                Id: ++currentCount,
+                Id: length,
                 Email: userData.Email,
                 Phone: userData.Phone,
                 City: userData.City,
@@ -380,6 +348,7 @@ const Portal = () => {
   };
 
   const deleteAgency = (id) => {
+    length--;
     fetch(`https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers/${id}`, {
       method: "DELETE",
       headers: {
@@ -447,6 +416,7 @@ const Portal = () => {
       icon: "bi bi-collection-fill",
     },
   ];
+  let filteredData = portalData;
   const handleSortBy = async (sort) => {
     if (sort === "#") {
       sort = "Id";
@@ -467,6 +437,19 @@ const Portal = () => {
         setPortalData(data.records);
       });
   };
+
+  if (searchValue !== "") {
+    filteredData = portalData.filter((record) => {
+      return record.fields[searchBy]
+        .toLowerCase()
+        .startsWith(searchValue.toLowerCase());
+    });
+  }
+  const handleChange = (e) => {
+    setSearchValue(e.target.value);
+  };
+  const debouncedSearch = React.useCallback(debounce(handleChange, 300), []);
+
   return (
     <Wrapper>
       <LeftSection>
@@ -513,9 +496,7 @@ const Portal = () => {
             <SearchInput
               type="text"
               placeholder={`Search By ${searchBy}`}
-              onChange={(e) => {
-                setSearchValue(e.target.value);
-              }}
+              onChange={debouncedSearch}
             />
             <Dropdown onClick={(e) => setSearchBy(e.target.value)}>
               <option value="Name">Name</option>
@@ -631,36 +612,33 @@ const Portal = () => {
             ""
           )}
           <Table>
-            <thead>
-              {titles.map((title, i) => (
-                <Th
-                  key={i}
-                  onClick={() => {
-                    handleSortBy(title);
-                    setSortBy({ asc: !sortBy.asc, title: title });
-                  }}
-                >
-                  {title}
-                  <i
-                    className={
-                      sortBy.icon ||
-                      `bi bi-arrow-${
-                        sortBy.asc && title === sortBy.title ? "down" : "up"
-                      }`
-                    }
-                  ></i>
-                </Th>
-              ))}
-              <Th>Action</Th>
-            </thead>
-            <tbody>
-              {searchValue && searchValue !== ""
-                ? portalData
-                    .filter((record) => {
-                      return record.fields[searchBy]
-                        .toLowerCase()
-                        .startsWith(searchValue.toLowerCase());
-                    })
+            {filteredData.length !== 0 ? (
+              <React.Fragment>
+                <thead>
+                  {titles.map((title, i) => (
+                    <Th
+                      key={i}
+                      onClick={() => {
+                        handleSortBy(title);
+                        setSortBy({ asc: !sortBy.asc, title: title });
+                      }}
+                    >
+                      {title}
+                      <i
+                        className={
+                          sortBy.icon ||
+                          `bi bi-arrow-${
+                            sortBy.asc && title === sortBy.title ? "down" : "up"
+                          }`
+                        }
+                      ></i>
+                    </Th>
+                  ))}
+                  <Th>Action</Th>
+                </thead>
+                <tbody>
+                  {filteredData
+                    .slice(pagination.startIndex, pagination.endIndex)
                     .map((field) => {
                       return (
                         <tr
@@ -693,45 +671,18 @@ const Portal = () => {
                           </td>
                         </tr>
                       );
-                    })
-                : portalData.map((field) => {
-                    return (
-                      <tr
-                        key={field.id}
-                        style={{
-                          borderBottom: "1px solid #800080",
-                          height: "70px",
-                          width: "100%",
-                        }}
-                      >
-                        <td>{field.fields.Id}</td>
-                        <td>{field.fields.Name}</td>
-                        <td>{field.fields.Email}</td>
-                        <td>{field.fields.Phone}</td>
-                        <td>{field.fields.City}</td>
-                        <td>{field.fields.Country}</td>
-                        <td>
-                          <ActionIcon
-                            className="bi bi-pencil-square"
-                            onClick={() => {
-                              setShowModal({ update: true });
-                              setTimeout(() => handleModal(), 0);
-                              updateAgencyData(field);
-                            }}
-                          ></ActionIcon>
-                          <ActionIcon
-                            className="bi bi-trash"
-                            onClick={() => deleteAgency(field.id)}
-                          ></ActionIcon>
-                        </td>
-                      </tr>
-                    );
-                  })}
-            </tbody>
+                    })}
+                </tbody>
+              </React.Fragment>
+            ) : (
+              <h3>No matches found</h3>
+            )}
           </Table>
         </div>
         <div style={{ display: "flex", justifyContent: "center" }}>
-          <Button onClick={handlePrevious}>Previous</Button>
+          <Button onClick={handlePrevious} disabled={currentPage === 1}>
+            Previous
+          </Button>
           <span
             style={{
               display: "flex",
@@ -740,9 +691,14 @@ const Portal = () => {
               height: "50px",
             }}
           >
-            {page}
+            {currentPage}
           </span>
-          <Button onClick={handleNext}>Next</Button>
+          <Button
+            onClick={handleNext}
+            disabled={currentPage === Math.ceil(length / showPerPage)}
+          >
+            Next
+          </Button>
         </div>
       </RightSection>
     </Wrapper>

@@ -202,20 +202,22 @@ const Signup = () => {
                 />
               </InputItems>
               <SignupButton type="submit">Sign up</SignupButton>
-              <a
+              <span
                 style={{
-                  display: "flex",
+                  display: "inline-flex",
                   justifyContent: "flex-end",
                   color: "#433ef1",
+                  padding: "3% 0",
                   fontWeight: "bold",
                   cursor: "pointer",
+                  
                 }}
                 onClick={() =>
                   setShowButton({ ...showButton, login: true, signup: false })
                 }
               >
                 Already signed up ?
-              </a>
+              </span>
             </React.Fragment>
           )}
           {showButton.login && <Login />}
