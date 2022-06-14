@@ -1,5 +1,6 @@
 import React from "react";
 import styledComponents from "styled-components";
+
 const InputItems = styledComponents.div`
 margin-bottom: 3%;
 margin-top: 5%;
@@ -47,8 +48,7 @@ const Label = styledComponents.label`
   font-size: 20px;
   margin-bottom: 1.5%;
 `;
-const Login = () => {
-  const [loginData, setLoginData] = React.useState({});
+const Login = ({ loginData, setLoginData, checkDetails }) => {
   return (
     <React.Fragment>
       <InputItems>
@@ -57,7 +57,7 @@ const Login = () => {
           type="email"
           placeholder="Enter your email"
           onChange={(e) =>
-            setLoginData({ ...loginData, Email: e.target.value })
+            setLoginData({ ...loginData, email: e.target.value })
           }
           required
         />
@@ -68,13 +68,15 @@ const Login = () => {
           type="password"
           placeholder="Enter your password"
           onChange={(e) =>
-            setLoginData({ ...loginData, Password: e.target.value })
+            setLoginData({ ...loginData, password: e.target.value })
           }
           maxLength={10}
           required
         />
       </InputItems>
-      <LoginButton type="submit">Login</LoginButton>
+      <LoginButton type="submit" onClick={(e) => checkDetails(e)}>
+        Login
+      </LoginButton>
     </React.Fragment>
   );
 };

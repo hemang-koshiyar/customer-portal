@@ -52,7 +52,7 @@ const Label = styledComponents.label`
   color: #800080;
   margin-bottom: 1.5%;
 `;
-const UpdateAgency = styledComponents.span`
+const UpdateTitle = styledComponents.span`
     text-align: center;
     color: #800080;
     font-weight: bold;
@@ -83,27 +83,37 @@ const UpdateButton = styledComponents.button`
 const InputItems = styledComponents.div`
 margin-bottom: 3%;
 `;
-const Modal = ({ modalRef, updateAgency, editData, setEditData }) => {
+const Modal = ({
+  modalRef,
+  onUpdate,
+  editData,
+  setEditData,
+  title,
+  currentUser,
+}) => {
+  const [details, setDetails] = React.useState(currentUser);
   return (
     <ModalBox ref={modalRef}>
       <ModalContent>
         <HeaderSection>
-          <UpdateAgency>Update Agency</UpdateAgency>
+          <UpdateTitle>Update {title}</UpdateTitle>
 
           <span onClick={() => (modalRef.current.style.display = "none")}>
             <Close className="bi bi-x-circle-fill"></Close>
           </span>
         </HeaderSection>
-        <hr color="#800080" style={{marginBottom: "5%"}}/>
+        <hr color="#800080" style={{ marginBottom: "5%" }} />
         <form>
           <InputItems>
             <Label>Name</Label>
             <Input
               type="text"
               placeholder="Enter your name"
-              value={editData.UName}
+              value={title === "Agency" ? editData.UName : details.name}
               onChange={(e) =>
-                setEditData({ ...editData, UName: e.target.value })
+                title === "Agency"
+                  ? setEditData({ ...editData, UName: e.target.value })
+                  : setDetails({ ...details, name: e.target.value })
               }
             />
           </InputItems>
@@ -112,9 +122,11 @@ const Modal = ({ modalRef, updateAgency, editData, setEditData }) => {
             <Input
               type="email"
               placeholder="Enter your email"
-              value={editData.UEmail}
+              value={title === "Agency" ? editData.UEmail : details.email}
               onChange={(e) =>
-                setEditData({ ...editData, UEmail: e.target.value })
+                title === "Agency"
+                  ? setEditData({ ...editData, UEmail: e.target.value })
+                  : setDetails({ ...details, email: e.target.value })
               }
             />
           </InputItems>
@@ -123,9 +135,11 @@ const Modal = ({ modalRef, updateAgency, editData, setEditData }) => {
             <Input
               type="tel"
               placeholder="Enter your phone"
-              value={editData.UPhone}
+              value={title === "Agency" ? editData.UPhone : details.phone}
               onChange={(e) =>
-                setEditData({ ...editData, UPhone: e.target.value })
+                title === "Agency"
+                  ? setEditData({ ...editData, UPhone: e.target.value })
+                  : setDetails({ ...details, phone: e.target.value })
               }
             />
           </InputItems>
@@ -134,9 +148,11 @@ const Modal = ({ modalRef, updateAgency, editData, setEditData }) => {
             <Input
               type="text"
               placeholder="Enter your city"
-              value={editData.UCity}
+              value={title === "Agency" ? editData.UCity : details.city}
               onChange={(e) =>
-                setEditData({ ...editData, UCity: e.target.value })
+                title === "Agency"
+                  ? setEditData({ ...editData, UCity: e.target.value })
+                  : setDetails({ ...details, city: e.target.value })
               }
             />
           </InputItems>
@@ -145,13 +161,27 @@ const Modal = ({ modalRef, updateAgency, editData, setEditData }) => {
             <Input
               type="text"
               placeholder="Enter your country"
-              value={editData.UCountry}
+              value={title === "Agency" ? editData.UCountry : details.country}
               onChange={(e) =>
-                setEditData({ ...editData, UCountry: e.target.value })
+                title === "Agency"
+                  ? setEditData({ ...editData, UCountry: e.target.value })
+                  : setDetails({ ...details, country: e.target.value })
               }
             />
           </InputItems>
-          <UpdateButton type="submit" onClick={(e) => updateAgency(e)}>
+          {title === "User" && (
+            <InputItems>
+              <Label>Password</Label>
+              <Input
+                type="password"
+                placeholder="Enter your password"
+                onChange={(e) =>
+                  setDetails({ ...details, password: e.target.value })
+                }
+              />
+            </InputItems>
+          )}
+          <UpdateButton type="submit" onClick={(e) => onUpdate(e, details)}>
             Update
           </UpdateButton>
         </form>

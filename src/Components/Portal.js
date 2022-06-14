@@ -1,4 +1,4 @@
-import { debounce } from "lodash";
+import { debounce, findIndex } from "lodash";
 import React from "react";
 import styledComponents from "styled-components";
 import Modal from "./Modal";
@@ -234,10 +234,12 @@ const Portal = () => {
     UPhone: "",
     UCity: "",
     UCountry: "",
+    UPassword: "",
   });
   const [showModal, setShowModal] = React.useState({
     add: false,
     update: false,
+    updateUser: false,
   });
   const [sortBy, setSortBy] = React.useState({
     asc: true,
@@ -248,12 +250,13 @@ const Portal = () => {
   const [searchBy, setSearchBy] = React.useState("Name");
   const [searchValue, setSearchValue] = React.useState("");
   const [currentPage, setCurrentPage] = React.useState(1);
-
+  const [currentUser, setCurrentUser] = React.useState({});
   const [showPerPage] = React.useState(4);
   const [pagination, setPagination] = React.useState({
     startIndex: 0,
     endIndex: showPerPage,
   });
+  const [userUpdateData, setUserUpdateData] = React.useState({});
   const onPaginationChange = (start, end) => {
     setPagination({ startIndex: start, endIndex: end });
   };
@@ -261,6 +264,17 @@ const Portal = () => {
     const value = showPerPage * currentPage;
     onPaginationChange(value - showPerPage, value);
   }, [currentPage]);
+
+  const getUserDetails = () => {
+    const getUser = localStorage.getItem("active");
+    if (getUser && getUser.length) {
+      const user = JSON.parse(getUser);
+      setCurrentUser(user[0]);
+    }
+  };
+  React.useEffect(() => {
+    getUserDetails();
+  }, []);
 
   const fetchData = async () => {
     return await fetch(
@@ -449,6 +463,17 @@ const Portal = () => {
     setSearchValue(e.target.value);
   };
   const debouncedSearch = React.useCallback(debounce(handleChange, 300), []);
+  const handleLogout = () => {
+    localStorage.removeItem("active");
+  };
+
+  //working on
+  const updateUser = (e, details) => {
+    e.preventDefault();
+    modalRef.current.display = "none";
+    setShowModal({ updateUser: false });
+    setEditData({});
+  };
 
   return (
     <Wrapper>
@@ -487,11 +512,35 @@ const Portal = () => {
               display: "flex",
               justifyContent: "flex-start",
               alignItems: "center",
+              width: "200px",
+              cursor: "pointer",
             }}
           >
             <i className="bi bi-person-circle" style={{ fontSize: "50px" }}></i>
-            <span style={{ paddingLeft: "20%", fontSize: "15pt" }}>User</span>
+            <span
+              style={{
+                paddingLeft: "10%",
+                fontSize: "15pt",
+                fontWeight: "bold",
+              }}
+              onClick={() => {
+                setShowModal({ updateUser: true });
+                setTimeout(() => handleModal(), 0);
+              }}
+            >
+              {currentUser.name}
+            </span>
           </div>
+          {showModal.updateUser && (
+            <Modal
+              title="User"
+              modalRef={modalRef}
+              onUpdate={updateUser}
+              editData={userUpdateData}
+              setEditData={setUserUpdateData}
+              currentUser={currentUser}
+            />
+          )}
           <SearchDivision>
             <SearchInput
               type="text"
@@ -517,14 +566,17 @@ const Portal = () => {
             overflowX: "auto",
           }}
         >
-          <AddButton
-            onClick={() => {
-              setShowModal({ add: true });
-              setTimeout(() => handleModal(), 0);
-            }}
-          >
-            Add Agency
-          </AddButton>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <AddButton
+              onClick={() => {
+                setShowModal({ add: true });
+                setTimeout(() => handleModal(), 0);
+              }}
+            >
+              Add Agency
+            </AddButton>
+            <Button onClick={handleLogout}>Logout</Button>
+          </div>
           {showModal.add ? (
             <ModalBox ref={modalRef}>
               <ModalContent>
@@ -603,8 +655,9 @@ const Portal = () => {
             </ModalBox>
           ) : showModal.update ? (
             <Modal
+              title="Agency"
               modalRef={modalRef}
-              updateAgency={updateAgency}
+              onUpdate={updateAgency}
               editData={editData}
               setEditData={setEditData}
             />
@@ -675,7 +728,10 @@ const Portal = () => {
                 </tbody>
               </React.Fragment>
             ) : (
-              <h3>No matches found</h3>
+              <h3>
+                No {searchBy.charAt(0).toLowerCase().concat(searchBy.slice(1))}{" "}
+                matches found
+              </h3>
             )}
           </Table>
         </div>

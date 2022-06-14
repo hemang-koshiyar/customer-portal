@@ -95,12 +95,48 @@ const Label = styledComponents.label`
   font-size: 20px;
   margin-bottom: 1.5%;
 `;
-const Signup = () => {
+const Signup = ({
+  signupData,
+  setSignUpData,
+  loginData,
+  localData,
+  setLocalData,
+  setLoginData,
+  checkDetails,
+}) => {
   const [showButton, setShowButton] = React.useState({
     signup: true,
     login: false,
   });
-  const [signupData, setSignUpData] = React.useState({});
+
+  const mobileReg = /^[0-9\b]+$/;
+  const verifyDetails = (e) => {
+    e.preventDefault();
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (signupData.name === "") {
+      alert("Please add name!");
+    } else if (signupData.email === "") {
+      alert("Please enter your email!");
+    } else if (!emailRegex.test(signupData.email)) {
+      alert("Please enter valid email!");
+    } else if (signupData.phone === "" || !mobileReg.test(signupData.phone)) {
+      alert("Please enter valid mobile no!");
+    } else if (signupData.city === "") {
+      alert("Please enter your city!");
+    } else if (signupData.country === "") {
+      alert("Please enter your country!");
+    } else if (signupData.password === "") {
+      alert("Please enter your password!");
+    } else {
+      setLocalData([...localData, signupData]);
+      alert("Signup successful!");
+      setShowButton({ ...showButton, signup: false, login: true });
+    }
+  };
+  React.useEffect(() => {
+    localStorage.setItem("users", JSON.stringify(localData));
+  }, [localData]);
+
   return (
     <React.Fragment>
       <H1>Customer Portal</H1>
@@ -131,7 +167,6 @@ const Signup = () => {
             </Button>
           </Buttons>
 
-          {/* <hr color="#433ef1" /> */}
           {showButton.signup && (
             <React.Fragment>
               <InputItems>
@@ -140,7 +175,7 @@ const Signup = () => {
                   type="text"
                   placeholder="Enter your name"
                   onChange={(e) =>
-                    setSignUpData({ ...signupData, Name: e.target.value })
+                    setSignUpData({ ...signupData, name: e.target.value })
                   }
                   required
                 />
@@ -151,7 +186,7 @@ const Signup = () => {
                   type="email"
                   placeholder="Enter your email"
                   onChange={(e) =>
-                    setSignUpData({ ...signupData, Email: e.target.value })
+                    setSignUpData({ ...signupData, email: e.target.value })
                   }
                   required
                 />
@@ -161,8 +196,9 @@ const Signup = () => {
                 <Input
                   type="tel"
                   placeholder="Enter your phone"
+                  pattern="[0-9]*"
                   onChange={(e) =>
-                    setSignUpData({ ...signupData, Phone: e.target.value })
+                    setSignUpData({ ...signupData, phone: e.target.value })
                   }
                   maxLength={10}
                   required
@@ -174,7 +210,7 @@ const Signup = () => {
                   type="text"
                   placeholder="Enter your city"
                   onChange={(e) =>
-                    setSignUpData({ ...signupData, City: e.target.value })
+                    setSignUpData({ ...signupData, city: e.target.value })
                   }
                   required
                 />
@@ -185,7 +221,7 @@ const Signup = () => {
                   type="text"
                   placeholder="Enter your country"
                   onChange={(e) =>
-                    setSignUpData({ ...signupData, Country: e.target.value })
+                    setSignUpData({ ...signupData, country: e.target.value })
                   }
                   required
                 />
@@ -196,12 +232,14 @@ const Signup = () => {
                   type="password"
                   placeholder="Enter your password"
                   onChange={(e) =>
-                    setSignUpData({ ...signupData, Password: e.target.value })
+                    setSignUpData({ ...signupData, password: e.target.value })
                   }
                   required
                 />
               </InputItems>
-              <SignupButton type="submit">Sign up</SignupButton>
+              <SignupButton type="submit" onClick={verifyDetails}>
+                Sign up
+              </SignupButton>
               <span
                 style={{
                   display: "inline-flex",
@@ -210,7 +248,6 @@ const Signup = () => {
                   padding: "3% 0",
                   fontWeight: "bold",
                   cursor: "pointer",
-                  
                 }}
                 onClick={() =>
                   setShowButton({ ...showButton, login: true, signup: false })
@@ -220,7 +257,13 @@ const Signup = () => {
               </span>
             </React.Fragment>
           )}
-          {showButton.login && <Login />}
+          {showButton.login && (
+            <Login
+              loginData={loginData}
+              setLoginData={setLoginData}
+              checkDetails={checkDetails}
+            />
+          )}
         </Form>
       </FormBody>
     </React.Fragment>
