@@ -1,37 +1,39 @@
 import React from "react";
-import Portal from "./Portal";
-import Signup from "./Signup";
+import Portal from "../Portal/Portal";
+import Signup from "../Signup/Signup";
 
 const Home = () => {
   const getLSData = () => {
-    const user = localStorage.getItem("users");
-    if (user.length && user.length > 0) {
-      return JSON.parse(user);
+    const users = localStorage.getItem("users");
+    if (users.length && users.length > 0) {
+      return JSON.parse(users);
     } else {
       return [];
     }
   };
-  const [localData, setLocalData] = React.useState(getLSData());
+
+  const [localData, setLocalData] = React.useState(getLSData() || []);
   const [signupData, setSignUpData] = React.useState({});
   const [loginData, setLoginData] = React.useState({});
-  const [showDashboard, setShowDashboard] = React.useState();
-  const [showActive, setShowActive] = React.useState(false);
-  const userLogin = localData.filter((el) => {
-    return (
-      el !== null &&
-      el.email === loginData.email &&
-      el.password === loginData.password
-    );
-  });
+  const [showActive, setShowActive] = React.useState();
+  let userLogin =
+    localData &&
+    localData.find((el) => {
+      return (
+        el !== null &&
+        el.email === loginData.email &&
+        el.password === loginData.password
+      );
+    });
 
   const checkDetails = (e) => {
     e.preventDefault();
-    if (userLogin.length === 0) {
+    if (!userLogin || userLogin === {}) {
       alert("Invalid credentials!");
     } else {
       alert("Login successful!");
-      localStorage.setItem("active", JSON.stringify(userLogin));
-      setShowDashboard(true);
+      localStorage.setItem("active", JSON.stringify({ ...userLogin }));
+      setShowActive(true);
     }
   };
 
@@ -45,8 +47,8 @@ const Home = () => {
   return (
     <React.Fragment>
       {showActive ? (
-        <Portal />
-      ) : !showDashboard ? (
+        <Portal setShowActive={setShowActive} />
+      ) : (
         <Signup
           signupData={signupData}
           setSignUpData={setSignUpData}
@@ -56,8 +58,6 @@ const Home = () => {
           setLoginData={setLoginData}
           checkDetails={checkDetails}
         />
-      ) : (
-        <Portal />
       )}
     </React.Fragment>
   );

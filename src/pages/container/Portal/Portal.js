@@ -1,225 +1,43 @@
-import { debounce, findIndex } from "lodash";
-import React from "react";
-import styledComponents from "styled-components";
-import Modal from "./Modal";
+import { debounce, filter, method } from "lodash";
+import React, { useCallback } from "react";
+import Modal from "../Modal/Modal";
+import {
+  ActionIcon,
+  AddAgency,
+  AddButton,
+  Button,
+  Categories,
+  Close,
+  ActionButtons,
+  Dropdown,
+  HeaderSection,
+  MiddleSection,
+  Icon,
+  Input,
+  InputItems,
+  Label,
+  LeftSection,
+  List,
+  Tr,
+  ModalBox,
+  ModalContent,
+  RightSection,
+  UpperSection,
+  SearchDivision,
+  SearchInput,
+  SubmitButton,
+  Table,
+  Th,
+  Wrapper,
+  UserInfo,
+  UserButton,
+  PageCount,
+} from "./Portal.styled";
 
-const Wrapper = styledComponents.div`
-    display: flex;
-    height: 100vh;
-    background:#800080;
-    
-    `;
-const LeftSection = styledComponents.div`
-    background: #800080;
-    color: #fff;
-    min-width:15%;
-    margin-top:3%;
-    `;
-const RightSection = styledComponents.div`
-  background: #ccc;
-    flex-grow: 1;
-    border-radius: 70px 0px 0px 70px;
-    `;
-const Categories = styledComponents.ul`
-    font-size: 25px;
-    font-weight: bold;
-    padding-left: 0;
-    list-style-type: none;
-    flex-direction: column;
-
-    `;
-const List = styledComponents.li`
-  padding: 10% 0;
-    :hover{
-        display: block;
-        background: #ccc;
-        color: #800080;
-        border-radius: 50px 0px 0px 50px;
-        width: 100%;
-        cursor: pointer;
-    }
-    `;
-const Icon = styledComponents.i`
-    margin: 0 20px;
-    `;
-const Table = styledComponents.table`
-
-    border-collapse: collapse;
-    width: 100%;
-    text-align: center;
-
-  `;
-const Th = styledComponents.th`
-   color: #800080;
-   :hover{
-     cursor: pointer;
-   }
-  `;
-const AddButton = styledComponents.button`
-    border: none;
-    width: 150px;
-    height: 50px;
-    font-weight: bold;
-    background: #ccc;
-    border-radius: 7px;
-    font-size: 15px;
-    margin-bottom:2%;
-    :hover{
-      cursor: pointer;
-      color: #800080;
-    }
-`;
-const Button = styledComponents.button`
-    border: none;
-    width: 100px;
-    height: 50px;
-    color: #fff;
-    font-weight: bold;
-    background: #800080;
-    border-radius: 7px;
-    font-size: 15px;
-    margin-bottom:2%;
-    :hover{
-      cursor: pointer;
-      background: #433ef1;
-
-    }
-`;
-
-const Dropdown = styledComponents.select`
-border: none;
-width: 100px;
-text-align: center;
-height: 50px;
-color: #fff;
-padding: 10px;
-font-weight: bold;
-background: #800080;
-border-radius: 0px 10px 10px 0px;
-font-size: 15px;
-margin-bottom:2%;
-:hover{
-  cursor: pointer;
-  background: #433ef1;
-
-}
-`;
-
-const ActionIcon = styledComponents.i`
-padding: 3%;
-color: #000;
-font-size: 25px;
-:hover{
-cursor: pointer;
-color: #800080;
-transition: 0.3s ease all;
-}
-`;
-
-const ModalBox = styledComponents.div`
-  display: none;
-  position: fixed;
-  top:0;
-  left:0;
-  overflow:auto;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  background-color: rgb(0,0,0);
-  background-color: rgba(0,0,0,0.4);
-`;
-const ModalContent = styledComponents.div`
-  border-radius: 10px;
-  background-color: #fefefe;
-  margin: 15% auto; 
-  padding: 20px;
-  border: 1px solid #888;
-  width: 20%;
-
-`;
-const Input = styledComponents.input`
-    height: 20px;
-    width: 93%;
-    padding: 5% 5%;
-    margin: 2% auto;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    padding: 3%;
-    display: block;
-    :hover{
-      border: 2px solid #800080;
-      ::placeholder{
-        color: #800080;
-      }
-    }
-   
-`;
-const Label = styledComponents.label`
-  font-weight: bold;
-  color: #800080;
-  margin-bottom: 1.5%;
-`;
-const AddAgency = styledComponents.span`
-    text-align: center;
-    color: #800080;
-    font-weight: bold;
-    font-size: 20px;
-`;
-
-const HeaderSection = styledComponents.div`
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 3%;
-`;
-const SubmitButton = styledComponents.button`
-    width:100%;
-    color: white;
-    margin-top: 3%;
-    background: #800080;
-    font-size: 15px;
-    height: 40px;
-    border:none;
-    border-radius: 10px;
-    cursor: pointer;
-    :hover{
-      transition: 0.3s ease all;
-      background: #433ef1; 
-    }
-
-`;
-const InputItems = styledComponents.div`
-margin-bottom: 3%;
-`;
-
-const Close = styledComponents.i`
-font-size: 20px;
-cursor: pointer;
-:hover{
-    color: #800080;
-    transition: 0.3s ease all;
-}
-`;
-
-const SearchInput = styledComponents.input`
-width: 300px;
-height: 50px;
-border: none;
-padding: 0 5px;
-font-size: 15px;
-border-radius: 10px 0px 0px 10px;
-::placeholder{
-  padding-left: 9px;
-}
-`;
-
-const SearchDivision = styledComponents.div`
-display: flex;
-justify-content: flex-end;
-`;
-
-const Portal = () => {
+const Portal = ({ setShowActive }) => {
   const [portalData, setPortalData] = React.useState([]);
   const modalRef = React.useRef();
+  const btnRef = React.useRef();
   const titles = ["#", "Name", "Email", "Phone", "City", "Country"];
   const [userData, setUserData] = React.useState({
     Name: "",
@@ -256,7 +74,6 @@ const Portal = () => {
     startIndex: 0,
     endIndex: showPerPage,
   });
-  const [userUpdateData, setUserUpdateData] = React.useState({});
   const onPaginationChange = (start, end) => {
     setPagination({ startIndex: start, endIndex: end });
   };
@@ -265,16 +82,17 @@ const Portal = () => {
     onPaginationChange(value - showPerPage, value);
   }, [currentPage]);
 
-  const getUserDetails = () => {
+  const getUserDetails = useCallback(() => {
     const getUser = localStorage.getItem("active");
     if (getUser && getUser.length) {
       const user = JSON.parse(getUser);
-      setCurrentUser(user[0]);
+      setCurrentUser(user);
     }
-  };
+  }, [localStorage.getItem("active")]);
+
   React.useEffect(() => {
     getUserDetails();
-  }, []);
+  }, [getUserDetails]);
 
   const fetchData = async () => {
     return await fetch(
@@ -303,9 +121,8 @@ const Portal = () => {
   const handleNext = () => {
     setCurrentPage((currentPage) => currentPage + 1);
   };
-  let length = portalData.length;
+
   const addAgency = (e) => {
-    length++;
     e.preventDefault();
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (userData.Name === "") {
@@ -332,7 +149,6 @@ const Portal = () => {
             {
               fields: {
                 Name: userData.Name,
-                Id: length,
                 Email: userData.Email,
                 Phone: userData.Phone,
                 City: userData.City,
@@ -362,7 +178,6 @@ const Portal = () => {
   };
 
   const deleteAgency = (id) => {
-    length--;
     fetch(`https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers/${id}`, {
       method: "DELETE",
       headers: {
@@ -430,7 +245,7 @@ const Portal = () => {
       icon: "bi bi-collection-fill",
     },
   ];
-  let filteredData = portalData;
+
   const handleSortBy = async (sort) => {
     if (sort === "#") {
       sort = "Id";
@@ -451,9 +266,9 @@ const Portal = () => {
         setPortalData(data.records);
       });
   };
-
+  let filteredData = portalData;
   if (searchValue !== "") {
-    filteredData = portalData.filter((record) => {
+    filteredData = filteredData.filter((record) => {
       return record.fields[searchBy]
         .toLowerCase()
         .startsWith(searchValue.toLowerCase());
@@ -464,15 +279,30 @@ const Portal = () => {
   };
   const debouncedSearch = React.useCallback(debounce(handleChange, 300), []);
   const handleLogout = () => {
+    setShowActive(false);
     localStorage.removeItem("active");
   };
 
-  //working on
   const updateUser = (e, details) => {
     e.preventDefault();
+    let { name, phone, email, city, country, password } = details;
+
+    let users = JSON.parse(localStorage.getItem("users"));
+    for (let i = 0; i < users.length; i++) {
+      if (users[i] !== null && users[i].name === currentUser.name) {
+        (users[i].name = name),
+          (users[i].phone = phone),
+          (users[i].email = email),
+          (users[i].city = city),
+          (users[i].country = country),
+          (users[i].password = password);
+      }
+    }
+
+    localStorage.setItem("users", JSON.stringify(users));
+    localStorage.setItem("active", JSON.stringify(details));
     modalRef.current.display = "none";
     setShowModal({ updateUser: false });
-    setEditData({});
   };
 
   return (
@@ -481,15 +311,7 @@ const Portal = () => {
         <Categories>
           {categories.map((category, i) => {
             return (
-              <List
-                key={i}
-                style={{
-                  background: category.name === "Agency" ? "#ccc" : "",
-                  color: category.name === "Agency" ? "#800080" : "",
-                  borderRadius:
-                    category.name === "Agency" ? "50px 0px 0px 50px" : "",
-                }}
-              >
+              <List key={i} category={category}>
                 <Icon className={category.icon}></Icon>
                 {category.name}
               </List>
@@ -498,46 +320,24 @@ const Portal = () => {
         </Categories>
       </LeftSection>
       <RightSection>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            height: "40px",
-            alignItems: "center",
-            margin: "3% 4%",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-start",
-              alignItems: "center",
-              width: "200px",
-              cursor: "pointer",
-            }}
-          >
+        <UpperSection>
+          <UserInfo>
             <i className="bi bi-person-circle" style={{ fontSize: "50px" }}></i>
-            <span
-              style={{
-                paddingLeft: "10%",
-                fontSize: "15pt",
-                fontWeight: "bold",
-              }}
+            <UserButton
               onClick={() => {
                 setShowModal({ updateUser: true });
                 setTimeout(() => handleModal(), 0);
               }}
             >
               {currentUser.name}
-            </span>
-          </div>
+              {console.log(currentUser.name)}
+            </UserButton>
+          </UserInfo>
           {showModal.updateUser && (
             <Modal
               title="User"
               modalRef={modalRef}
               onUpdate={updateUser}
-              editData={userUpdateData}
-              setEditData={setUserUpdateData}
               currentUser={currentUser}
             />
           )}
@@ -554,19 +354,9 @@ const Portal = () => {
               <option value="Country">Country</option>
             </Dropdown>
           </SearchDivision>
-        </div>
-        <div
-          style={{
-            background: "white",
-            boxShadow: "0 0 5px #ccc",
-            borderRadius: "7px",
-            height: "auto",
-            margin: "3%",
-            padding: "2%",
-            overflowX: "auto",
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+        </UpperSection>
+        <MiddleSection>
+          <ActionButtons>
             <AddButton
               onClick={() => {
                 setShowModal({ add: true });
@@ -575,8 +365,10 @@ const Portal = () => {
             >
               Add Agency
             </AddButton>
-            <Button onClick={handleLogout}>Logout</Button>
-          </div>
+            <Button onClick={handleLogout} title="Logout">
+              Logout
+            </Button>
+          </ActionButtons>
           {showModal.add ? (
             <ModalBox ref={modalRef}>
               <ModalContent>
@@ -694,14 +486,7 @@ const Portal = () => {
                     .slice(pagination.startIndex, pagination.endIndex)
                     .map((field) => {
                       return (
-                        <tr
-                          key={field.id}
-                          style={{
-                            borderBottom: "1px solid #800080",
-                            height: "70px",
-                            width: "100%",
-                          }}
-                        >
+                        <Tr key={field.id}>
                           <td>{field.fields.Id}</td>
                           <td>{field.fields.Name}</td>
                           <td>{field.fields.Email}</td>
@@ -722,7 +507,7 @@ const Portal = () => {
                               onClick={() => deleteAgency(field.id)}
                             ></ActionIcon>
                           </td>
-                        </tr>
+                        </Tr>
                       );
                     })}
                 </tbody>
@@ -734,26 +519,28 @@ const Portal = () => {
               </h3>
             )}
           </Table>
-        </div>
+        </MiddleSection>
         <div style={{ display: "flex", justifyContent: "center" }}>
-          <Button onClick={handlePrevious} disabled={currentPage === 1}>
-            Previous
-          </Button>
-          <span
-            style={{
-              display: "flex",
-              padding: "0 1%",
-              alignItems: "center",
-              height: "50px",
-            }}
+          <Button
+            onClick={handlePrevious}
+            disabled={currentPage === 1}
+            ref={btnRef}
+            title="Pagination"
+            btnRef={btnRef}
           >
-            {currentPage}
-          </span>
+            <i className="bi bi-arrow-left"></i>
+          </Button>
+          <PageCount>{currentPage}</PageCount>
           <Button
             onClick={handleNext}
-            disabled={currentPage === Math.ceil(length / showPerPage)}
+            ref={btnRef}
+            btnRef={btnRef}
+            title="Pagination"
+            disabled={
+              currentPage === Math.ceil(portalData.length / showPerPage)
+            }
           >
-            Next
+            <i className="bi bi-arrow-right"></i>
           </Button>
         </div>
       </RightSection>
