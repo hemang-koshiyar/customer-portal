@@ -8,7 +8,7 @@ export const FormBody = styled.div`
 `;
 
 export const Form = styled.form`
-  width: 600px;
+  width: 500px;
   height: auto;
   background: #fff;
   border-radius: 10px;
@@ -54,9 +54,6 @@ export const Button = styled.button`
   font-size: 20px;
   font-weight: bold;
   border-radius: 10px;
-  background: ${(showButton) =>
-    showButton.signup ? "#433ef1" : "transparent"};
-  color: ${(showButton) => (showButton.signup ? "#fff" : "#433ef1")};
   :hover {
     cursor: pointer;
     background: #433ef1;
@@ -66,7 +63,7 @@ export const Button = styled.button`
 export const BottomText = styled.span`
   display: flex;
   justify-content: flex-start;
-  width: 30%;
+  width: 35%;
   color: #433ef1;
   padding: 3% 0;
   font-weight: bold;

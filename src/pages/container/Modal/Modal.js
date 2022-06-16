@@ -109,7 +109,7 @@ const Modal = ({
               />
             </InputItems>
           )}
-          <UpdateButton type="submit" onClick={(e)=>onUpdate(e,details)}>
+          <UpdateButton type="submit" onClick={(e) => onUpdate(e, details)}>
             Update
           </UpdateButton>
         </form>

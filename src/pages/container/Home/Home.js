@@ -5,7 +5,7 @@ import Signup from "../Signup/Signup";
 const Home = () => {
   const getLSData = () => {
     const users = localStorage.getItem("users");
-    if (users.length && users.length > 0) {
+    if (users && users.length > 0) {
       return JSON.parse(users);
     } else {
       return [];
@@ -13,7 +13,14 @@ const Home = () => {
   };
 
   const [localData, setLocalData] = React.useState(getLSData() || []);
-  const [signupData, setSignUpData] = React.useState({});
+  const [signupData, setSignUpData] = React.useState({
+    name: "",
+    email: "",
+    phone: "",
+    city: "",
+    country: "",
+    password: "",
+  });
   const [loginData, setLoginData] = React.useState({});
   const [showActive, setShowActive] = React.useState();
   let userLogin =
@@ -47,7 +54,7 @@ const Home = () => {
   return (
     <React.Fragment>
       {showActive ? (
-        <Portal setShowActive={setShowActive} />
+        <Portal setShowActive={setShowActive} setLocalData={setLocalData} />
       ) : (
         <Signup
           signupData={signupData}

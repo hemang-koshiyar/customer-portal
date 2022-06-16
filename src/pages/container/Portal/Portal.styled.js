@@ -25,10 +25,6 @@ export const Categories = styled.ul`
 `;
 export const List = styled.li`
   padding: 10% 0;
-  background: ${(category) => category.name === "Agency" && "#ccc"};
-  color: ${(category) => category.name === "Agency" && "#800080"};
-  border-radius: ${(category) =>
-    category.name === "Agency" && "50px 0px 0px 50px"};
   :hover {
     display: block;
     background: #ccc;

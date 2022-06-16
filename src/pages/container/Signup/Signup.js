@@ -1,5 +1,6 @@
 import React from "react";
 import Login from "../Login/Login";
+import "./Signup.module.css";
 import {
   Button,
   Buttons,
@@ -30,6 +31,7 @@ const Signup = ({
   const mobileReg = /^[0-9\b]+$/;
   const verifyDetails = (e) => {
     e.preventDefault();
+
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (signupData.name === "") {
       alert("Please add name!");
@@ -46,7 +48,7 @@ const Signup = ({
     } else if (signupData.password === "") {
       alert("Please enter your password!");
     } else {
-      setLocalData([...localData, ...signupData]);
+      setLocalData([...localData, signupData]);
       alert("Signup successful!");
       setShowButton({ ...showButton, signup: false, login: true });
     }
@@ -63,17 +65,15 @@ const Signup = ({
           <Buttons>
             <Button
               showButton={showButton}
-              onClick={() =>
-                setShowButton({ ...showButton, signup: true, login: false })
-              }
+              onClick={() => setShowButton({ signup: true, login: false })}
+              className={showButton.signup ? "activeButtons" : ""}
             >
               Sign up
             </Button>
             <Button
               showButton={showButton}
-              onClick={() =>
-                setShowButton({ ...showButton, login: true, signup: false })
-              }
+              onClick={() => setShowButton({ login: true, signup: false })}
+              className={showButton.login ? "activeButtons" : ""}
             >
               Login
             </Button>

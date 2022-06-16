@@ -1,5 +1,7 @@
-import { debounce, filter, method } from "lodash";
+import { debounce, filter } from "lodash";
 import React, { useCallback } from "react";
+import "./Portal.module.css";
+import loader from "../../../loader.gif";
 import Modal from "../Modal/Modal";
 import {
   ActionIcon,
@@ -34,11 +36,13 @@ import {
   PageCount,
 } from "./Portal.styled";
 
-const Portal = ({ setShowActive }) => {
+const Portal = ({ setShowActive, setLocalData }) => {
   const [portalData, setPortalData] = React.useState([]);
   const modalRef = React.useRef();
-  const btnRef = React.useRef();
+  const prevBtnRef = React.useRef();
+  const nextBtnRef = React.useRef();
   const titles = ["#", "Name", "Email", "Phone", "City", "Country"];
+
   const [userData, setUserData] = React.useState({
     Name: "",
     Email: "",
@@ -69,7 +73,10 @@ const Portal = ({ setShowActive }) => {
   const [searchValue, setSearchValue] = React.useState("");
   const [currentPage, setCurrentPage] = React.useState(1);
   const [currentUser, setCurrentUser] = React.useState({});
-  const [showPerPage] = React.useState(4);
+  const [showPerPage, setShowPerPage] = React.useState(4);
+  let filteredData = portalData;
+  let pages = Math.ceil(filteredData.length / showPerPage);
+  const [totalPages, setTotalPages] = React.useState(pages);
   const [pagination, setPagination] = React.useState({
     startIndex: 0,
     endIndex: showPerPage,
@@ -266,7 +273,7 @@ const Portal = ({ setShowActive }) => {
         setPortalData(data.records);
       });
   };
-  let filteredData = portalData;
+
   if (searchValue !== "") {
     filteredData = filteredData.filter((record) => {
       return record.fields[searchBy]
@@ -274,6 +281,19 @@ const Portal = ({ setShowActive }) => {
         .startsWith(searchValue.toLowerCase());
     });
   }
+
+  React.useEffect(() => {
+    if (filteredData.length < showPerPage) {
+      setCurrentPage(1);
+    } else if (filteredData.length > showPerPage) {
+      pages = Math.ceil(filteredData.length / showPerPage);
+      setTotalPages(pages);
+      if (currentPage > pages) {
+        setCurrentPage(1);
+      }
+    }
+  }, [filteredData]);
+
   const handleChange = (e) => {
     setSearchValue(e.target.value);
   };
@@ -285,21 +305,22 @@ const Portal = ({ setShowActive }) => {
 
   const updateUser = (e, details) => {
     e.preventDefault();
+
     let { name, phone, email, city, country, password } = details;
 
     let users = JSON.parse(localStorage.getItem("users"));
     for (let i = 0; i < users.length; i++) {
       if (users[i] !== null && users[i].name === currentUser.name) {
-        (users[i].name = name),
-          (users[i].phone = phone),
-          (users[i].email = email),
-          (users[i].city = city),
-          (users[i].country = country),
-          (users[i].password = password);
+        users[i].name = name;
+        users[i].phone = phone;
+        users[i].email = email;
+        users[i].city = city;
+        users[i].country = country;
+        users[i].password = password;
       }
     }
-
     localStorage.setItem("users", JSON.stringify(users));
+    setLocalData(users);
     localStorage.setItem("active", JSON.stringify(details));
     modalRef.current.display = "none";
     setShowModal({ updateUser: false });
@@ -311,7 +332,10 @@ const Portal = ({ setShowActive }) => {
         <Categories>
           {categories.map((category, i) => {
             return (
-              <List key={i} category={category}>
+              <List
+                key={i}
+                className={category.name === "Agency" ? "active" : ""}
+              >
                 <Icon className={category.icon}></Icon>
                 {category.name}
               </List>
@@ -330,7 +354,6 @@ const Portal = ({ setShowActive }) => {
               }}
             >
               {currentUser.name}
-              {console.log(currentUser.name)}
             </UserButton>
           </UserInfo>
           {showModal.updateUser && (
@@ -512,10 +535,15 @@ const Portal = ({ setShowActive }) => {
                     })}
                 </tbody>
               </React.Fragment>
+            ) : searchValue !== "" && filteredData.length === 0 ? (
+              <h3>
+                <i className="bi bi-exclamation-circle-fill"></i> No{" "}
+                {searchBy.charAt(0).toLowerCase().concat(searchBy.slice(1))}{" "}
+                matches found
+              </h3>
             ) : (
               <h3>
-                No {searchBy.charAt(0).toLowerCase().concat(searchBy.slice(1))}{" "}
-                matches found
+                <img src={loader} width={100} height={100} />
               </h3>
             )}
           </Table>
@@ -524,21 +552,19 @@ const Portal = ({ setShowActive }) => {
           <Button
             onClick={handlePrevious}
             disabled={currentPage === 1}
-            ref={btnRef}
+            ref={prevBtnRef}
             title="Pagination"
-            btnRef={btnRef}
+            btnRef={prevBtnRef}
           >
             <i className="bi bi-arrow-left"></i>
           </Button>
-          <PageCount>{currentPage}</PageCount>
+          <PageCount>Page {currentPage}</PageCount>
           <Button
             onClick={handleNext}
-            ref={btnRef}
-            btnRef={btnRef}
+            ref={nextBtnRef}
+            btnRef={nextBtnRef}
             title="Pagination"
-            disabled={
-              currentPage === Math.ceil(portalData.length / showPerPage)
-            }
+            disabled={currentPage === totalPages || filteredData.length < 5}
           >
             <i className="bi bi-arrow-right"></i>
           </Button>
