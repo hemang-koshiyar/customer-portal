@@ -1,4 +1,4 @@
-import { debounce, filter } from "lodash";
+import { debounce } from "lodash";
 import React, { useCallback } from "react";
 import "./Portal.module.css";
 import loader from "../../../loader.gif";
@@ -73,7 +73,7 @@ const Portal = ({ setShowActive, setLocalData }) => {
   const [searchValue, setSearchValue] = React.useState("");
   const [currentPage, setCurrentPage] = React.useState(1);
   const [currentUser, setCurrentUser] = React.useState({});
-  const [showPerPage, setShowPerPage] = React.useState(4);
+  const [showPerPage] = React.useState(4);
   let filteredData = portalData;
   let pages = Math.ceil(filteredData.length / showPerPage);
   const [totalPages, setTotalPages] = React.useState(pages);
@@ -131,6 +131,7 @@ const Portal = ({ setShowActive, setLocalData }) => {
 
   const addAgency = (e) => {
     e.preventDefault();
+    // eslint-disable-next-line
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (userData.Name === "") {
       alert("Please add name!");
@@ -543,7 +544,7 @@ const Portal = ({ setShowActive, setLocalData }) => {
               </h3>
             ) : (
               <h3>
-                <img src={loader} width={100} height={100} />
+                <img src={loader} width={100} height={100} alt="Loading..." />
               </h3>
             )}
           </Table>

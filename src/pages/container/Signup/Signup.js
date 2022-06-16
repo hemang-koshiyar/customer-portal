@@ -27,11 +27,11 @@ const Signup = ({
     signup: true,
     login: false,
   });
-
+  // eslint-disable-next-line
   const mobileReg = /^[0-9\b]+$/;
   const verifyDetails = (e) => {
     e.preventDefault();
-
+    // eslint-disable-next-line
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (signupData.name === "") {
       alert("Please add name!");
