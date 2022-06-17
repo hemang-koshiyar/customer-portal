@@ -207,30 +207,46 @@ const Portal = ({ setShowActive, setLocalData }) => {
 
   const updateAgency = (e) => {
     e.preventDefault();
-    fetch("https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers", {
-      method: "PATCH",
-      headers: {
-        Authorization: "Bearer keyORrZt08dnm2627",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        records: [
-          {
-            id: editData.id,
-            fields: {
-              Name: editData.UName,
-              Email: editData.UEmail,
-              Phone: editData.UPhone,
-              City: editData.UCity,
-              Country: editData.UCountry,
+    // eslint-disable-next-line
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (editData.UName === "") {
+      alert("Please add name!");
+    } else if (editData.UEmail === "") {
+      alert("Please enter your email!");
+    } else if (!emailRegex.test(editData.UEmail)) {
+      alert("Please enter valid email!");
+    } else if (editData.UPhone === "") {
+      alert("Please enter mobile no!");
+    } else if (editData.UCity === "") {
+      alert("Please enter your city!");
+    } else if (editData.UCountry === "") {
+      alert("Please enter your country!");
+    } else {
+      fetch("https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers", {
+        method: "PATCH",
+        headers: {
+          Authorization: "Bearer keyORrZt08dnm2627",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          records: [
+            {
+              id: editData.id,
+              fields: {
+                Name: editData.UName,
+                Email: editData.UEmail,
+                Phone: editData.UPhone,
+                City: editData.UCity,
+                Country: editData.UCountry,
+              },
             },
-          },
-        ],
-      }),
-    }).then((res) => res.status === 200 && fetchData());
+          ],
+        }),
+      }).then((res) => res.status === 200 && fetchData());
 
-    modalRef.current.style.display = "none";
-    setShowModal({ update: false });
+      modalRef.current.style.display = "none";
+      setShowModal({ update: false });
+    }
   };
   const handleModal = () => {
     modalRef.current.style.display = "block";
@@ -305,26 +321,40 @@ const Portal = ({ setShowActive, setLocalData }) => {
   };
 
   const updateUser = (e, details) => {
-    e.preventDefault();
-
     let { name, phone, email, city, country, password } = details;
-
-    let users = JSON.parse(localStorage.getItem("users"));
-    for (let i = 0; i < users.length; i++) {
-      if (users[i] !== null && users[i].name === currentUser.name) {
-        users[i].name = name;
-        users[i].phone = phone;
-        users[i].email = email;
-        users[i].city = city;
-        users[i].country = country;
-        users[i].password = password;
+    e.preventDefault();
+    // eslint-disable-next-line
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (name === "") {
+      alert("Please add name!");
+    } else if (email === "") {
+      alert("Please enter your email!");
+    } else if (!emailRegex.test(email)) {
+      alert("Please enter valid email!");
+    } else if (phone === "") {
+      alert("Please enter mobile no!");
+    } else if (city === "") {
+      alert("Please enter your city!");
+    } else if (country === "") {
+      alert("Please enter your country!");
+    } else {
+      let users = JSON.parse(localStorage.getItem("users"));
+      for (let i = 0; i < users.length; i++) {
+        if (users[i] !== null && users[i].name === currentUser.name) {
+          users[i].name = name;
+          users[i].phone = phone;
+          users[i].email = email;
+          users[i].city = city;
+          users[i].country = country;
+          users[i].password = password;
+        }
       }
+      localStorage.setItem("users", JSON.stringify(users));
+      setLocalData(users);
+      localStorage.setItem("active", JSON.stringify(details));
+      modalRef.current.display = "none";
+      setShowModal({ updateUser: false });
     }
-    localStorage.setItem("users", JSON.stringify(users));
-    setLocalData(users);
-    localStorage.setItem("active", JSON.stringify(details));
-    modalRef.current.display = "none";
-    setShowModal({ updateUser: false });
   };
 
   return (
@@ -346,16 +376,14 @@ const Portal = ({ setShowActive, setLocalData }) => {
       </LeftSection>
       <RightSection>
         <UpperSection>
-          <UserInfo>
+          <UserInfo
+            onClick={() => {
+              setShowModal({ updateUser: true });
+              setTimeout(() => handleModal(), 0);
+            }}
+          >
             <i className="bi bi-person-circle" style={{ fontSize: "50px" }}></i>
-            <UserButton
-              onClick={() => {
-                setShowModal({ updateUser: true });
-                setTimeout(() => handleModal(), 0);
-              }}
-            >
-              {currentUser.name}
-            </UserButton>
+            <UserButton>{currentUser.name}</UserButton>
           </UserInfo>
           {showModal.updateUser && (
             <Modal

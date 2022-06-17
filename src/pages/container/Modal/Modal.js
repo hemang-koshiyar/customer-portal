@@ -69,6 +69,7 @@ const Modal = ({
                   ? setEditData({ ...editData, UPhone: e.target.value })
                   : setDetails({ ...details, phone: e.target.value })
               }
+              maxLength={10}
             />
           </InputItems>
           <InputItems>
