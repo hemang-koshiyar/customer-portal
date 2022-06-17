@@ -1,4 +1,5 @@
 import React from "react";
+import { NotificationContainer, NotificationManager } from "react-notifications";
 import Portal from "../Portal/Portal";
 import Signup from "../Signup/Signup";
 
@@ -36,9 +37,9 @@ const Home = () => {
   const checkDetails = (e) => {
     e.preventDefault();
     if (!userLogin || userLogin === {}) {
-      alert("Invalid credentials!");
+      NotificationManager.error("Invalid credentials!");
     } else {
-      alert("Login successful!");
+      NotificationManager.success("Login Successful");
       localStorage.setItem("active", JSON.stringify({ ...userLogin }));
       setShowActive(true);
     }
@@ -59,6 +60,7 @@ const Home = () => {
         <Signup
           signupData={signupData}
           setSignUpData={setSignUpData}
+          setShowActive={setShowActive}
           localData={localData}
           setLocalData={setLocalData}
           loginData={loginData}
@@ -66,6 +68,7 @@ const Home = () => {
           checkDetails={checkDetails}
         />
       )}
+      <NotificationContainer/>
     </React.Fragment>
   );
 };

@@ -3,10 +3,10 @@ import styled from "styled-components";
 export const Wrapper = styled.div`
   display: flex;
   height: 100vh;
-  background: #800080;
+  background: #433ef1;
 `;
 export const LeftSection = styled.div`
-  background: #800080;
+  background: #433ef1;
   color: #fff;
   min-width: 15%;
   margin-top: 3%;
@@ -28,7 +28,7 @@ export const List = styled.li`
   :hover {
     display: block;
     background: #ccc;
-    color: #800080;
+    color: #433ef1;
     border-radius: 50px 0px 0px 50px;
     width: 100%;
     cursor: pointer;
@@ -43,7 +43,7 @@ export const Table = styled.table`
   text-align: center;
 `;
 export const Th = styled.th`
-  color: #800080;
+  color: #433ef1;
   :hover {
     cursor: pointer;
   }
@@ -59,14 +59,15 @@ export const AddButton = styled.button`
   border: none;
   width: 150px;
   height: 50px;
+  color: #fff;
   font-weight: bold;
-  background: #ccc;
+  background: #433ef1;
   border-radius: 7px;
   font-size: 15px;
   margin-bottom: 2%;
   :hover {
     cursor: pointer;
-    color: #800080;
+    background: #800080;
   }
 `;
 export const Button = styled.button`
@@ -75,13 +76,13 @@ export const Button = styled.button`
   height: 50px;
   color: #fff;
   font-weight: bold;
-  background: ${(btnRef) => (btnRef.disabled ? "#000" : "#800080")};
+  background: ${(btnRef) => (btnRef.disabled ? "#000" : "#433ef1")};
   border-radius: 7px;
   font-size: 15px;
   margin-bottom: 2%;
   :hover {
     cursor: ${(btnRef) => (btnRef.disabled ? "" : "pointer")};
-    background: ${(btnRef) => (btnRef.disabled ? "" : "#433ef1")};
+    background: ${(btnRef) => (btnRef.disabled ? "" : "#800080")};
   }
 `;
 
@@ -93,13 +94,13 @@ export const Dropdown = styled.select`
   color: #fff;
   padding: 10px;
   font-weight: bold;
-  background: #800080;
+  background: #433ef1;
   border-radius: 0px 10px 10px 0px;
   font-size: 15px;
   margin-bottom: 2%;
   :hover {
     cursor: pointer;
-    background: #433ef1;
+    background: #800080;
   }
 `;
 
@@ -109,7 +110,7 @@ export const ActionIcon = styled.i`
   font-size: 25px;
   :hover {
     cursor: pointer;
-    color: #800080;
+    color: #433ef1;
     transition: 0.3s ease all;
   }
 `;
@@ -154,20 +155,20 @@ export const Input = styled.input`
   padding: 3%;
   display: block;
   :hover {
-    border: 2px solid #800080;
+    border: 2px solid #433ef1;
     ::placeholder {
-      color: #800080;
+      color: #433ef1;
     }
   }
 `;
 export const Label = styled.label`
   font-weight: bold;
-  color: #800080;
+  color: #433ef1;
   margin-bottom: 1.5%;
 `;
 export const AddAgency = styled.span`
   text-align: center;
-  color: #800080;
+  color: #433ef1;
   font-weight: bold;
   font-size: 20px;
 `;
@@ -191,7 +192,7 @@ export const SubmitButton = styled.button`
   width: 100%;
   color: white;
   margin-top: 3%;
-  background: #800080;
+  background: #433ef1;
   font-size: 15px;
   height: 40px;
   border: none;
@@ -199,7 +200,7 @@ export const SubmitButton = styled.button`
   cursor: pointer;
   :hover {
     transition: 0.3s ease all;
-    background: #433ef1;
+    background: #800080;
   }
 `;
 export const InputItems = styled.div`
@@ -210,7 +211,7 @@ export const Close = styled.i`
   font-size: 20px;
   cursor: pointer;
   :hover {
-    color: #800080;
+    color: #433ef1;
     transition: 0.3s ease all;
   }
 `;
@@ -227,7 +228,7 @@ export const SearchInput = styled.input`
   }
 `;
 export const Tr = styled.tr`
-  border-bottom: 1px solid #800080;
+  border-bottom: 1px solid #433ef1;
   height: 70px;
   width: 100%;
 `;

@@ -1,4 +1,5 @@
 import React from "react";
+import { NotificationManager } from "react-notifications";
 import Login from "../Login/Login";
 import "./Signup.module.css";
 import {
@@ -17,6 +18,7 @@ import {
 const Signup = ({
   signupData,
   setSignUpData,
+  setShowActive,
   loginData,
   localData,
   setLocalData,
@@ -29,27 +31,28 @@ const Signup = ({
   });
   // eslint-disable-next-line
   const mobileReg = /^[0-9\b]+$/;
-  const verifyDetails = (e) => {
+  const verifyDetails = (e, ) => {
     e.preventDefault();
     // eslint-disable-next-line
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (signupData.name === "") {
-      alert("Please add name!");
+      NotificationManager.warning("Please add name!");
     } else if (signupData.email === "") {
-      alert("Please enter your email!");
+      NotificationManager.warning("Please enter your email!");
     } else if (!emailRegex.test(signupData.email)) {
-      alert("Please enter valid email!");
+      NotificationManager.warning("Please enter valid email!");
     } else if (signupData.phone === "" || !mobileReg.test(signupData.phone)) {
-      alert("Please enter valid mobile no!");
+      NotificationManager.warning("Please enter valid mobile no!");
     } else if (signupData.city === "") {
-      alert("Please enter your city!");
+      NotificationManager.warning("Please enter your city!");
     } else if (signupData.country === "") {
-      alert("Please enter your country!");
+      NotificationManager.warning("Please enter your country!");
     } else if (signupData.password === "") {
-      alert("Please enter your password!");
+      NotificationManager.warning("Please enter your password!");
     } else {
       setLocalData([...localData, signupData]);
-      alert("Signup successful!");
+      NotificationManager.success("Signup Successful");
+      setShowActive(true);
       setShowButton({ ...showButton, signup: false, login: true });
     }
   };
@@ -165,10 +168,12 @@ const Signup = ({
               loginData={loginData}
               setLoginData={setLoginData}
               checkDetails={checkDetails}
+              
             />
           )}
         </Form>
       </FormBody>
+      
     </React.Fragment>
   );
 };

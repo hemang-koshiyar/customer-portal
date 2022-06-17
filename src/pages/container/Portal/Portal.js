@@ -35,6 +35,7 @@ import {
   UserButton,
   PageCount,
 } from "./Portal.styled";
+import { NotificationManager } from "react-notifications";
 
 const Portal = ({ setShowActive, setLocalData }) => {
   const [portalData, setPortalData] = React.useState([]);
@@ -134,17 +135,17 @@ const Portal = ({ setShowActive, setLocalData }) => {
     // eslint-disable-next-line
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (userData.Name === "") {
-      alert("Please add name!");
+      NotificationManager.warning("Please add name!");
     } else if (userData.Email === "") {
-      alert("Please enter your email!");
+      NotificationManager.warning("Please enter your email!");
     } else if (!emailRegex.test(userData.Email)) {
-      alert("Please enter valid email!");
+      NotificationManager.warning("Please enter valid email!");
     } else if (userData.Phone === "") {
-      alert("Please enter mobile no!");
+      NotificationManager.warning("Please enter mobile no!");
     } else if (userData.City === "") {
-      alert("Please enter your city!");
+      NotificationManager.warning("Please enter your city!");
     } else if (userData.Country === "") {
-      alert("Please enter your country!");
+      NotificationManager.warning("Please enter your country!");
     } else {
       fetch("https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers", {
         method: "POST",
@@ -210,17 +211,17 @@ const Portal = ({ setShowActive, setLocalData }) => {
     // eslint-disable-next-line
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (editData.UName === "") {
-      alert("Please add name!");
+      NotificationManager.warning("Please add name!");
     } else if (editData.UEmail === "") {
-      alert("Please enter your email!");
+      NotificationManager.warning("Please enter your email!");
     } else if (!emailRegex.test(editData.UEmail)) {
-      alert("Please enter valid email!");
+      NotificationManager.warning("Please enter valid email!");
     } else if (editData.UPhone === "") {
-      alert("Please enter mobile no!");
+      NotificationManager.warning("Please enter mobile no!");
     } else if (editData.UCity === "") {
-      alert("Please enter your city!");
+      NotificationManager.warning("Please enter your city!");
     } else if (editData.UCountry === "") {
-      alert("Please enter your country!");
+      NotificationManager.warning("Please enter your country!");
     } else {
       fetch("https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers", {
         method: "PATCH",
@@ -326,17 +327,17 @@ const Portal = ({ setShowActive, setLocalData }) => {
     // eslint-disable-next-line
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (name === "") {
-      alert("Please add name!");
+      NotificationManager.warning("Please add name!");
     } else if (email === "") {
-      alert("Please enter your email!");
+      NotificationManager.warning("Please enter your email!");
     } else if (!emailRegex.test(email)) {
-      alert("Please enter valid email!");
+      NotificationManager.warning("Please enter valid email!");
     } else if (phone === "") {
-      alert("Please enter mobile no!");
+      NotificationManager.warning("Please enter mobile no!");
     } else if (city === "") {
-      alert("Please enter your city!");
+      NotificationManager.warning("Please enter your city!");
     } else if (country === "") {
-      alert("Please enter your country!");
+      NotificationManager.warning("Please enter your country!");
     } else {
       let users = JSON.parse(localStorage.getItem("users"));
       for (let i = 0; i < users.length; i++) {
@@ -433,7 +434,7 @@ const Portal = ({ setShowActive, setLocalData }) => {
                     <Close className="bi bi-x-circle-fill"></Close>
                   </span>
                 </HeaderSection>
-                <hr color="#800080" style={{ marginBottom: "5%" }} />
+                <hr color="#433ef1" style={{ marginBottom: "5%" }} />
                 <form>
                   <InputItems>
                     <Label>Name</Label>

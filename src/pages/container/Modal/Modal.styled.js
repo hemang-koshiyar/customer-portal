@@ -30,9 +30,9 @@ export const Input = styled.input`
   padding: 3%;
   display: block;
   :hover {
-    border: 2px solid #800080;
+    border: 2px solid #433ef1;
     ::placeholder {
-      color: #800080;
+      color: #433ef1;
     }
   }
 `;
@@ -40,18 +40,18 @@ export const Close = styled.i`
   font-size: 20px;
   cursor: pointer;
   :hover {
-    color: #800080;
+    color: #433ef1;
     transition: 0.3s ease all;
   }
 `;
 export const Label = styled.label`
   font-weight: bold;
-  color: #800080;
+  color: #433ef1;
   margin-bottom: 1.5%;
 `;
 export const UpdateTitle = styled.span`
   text-align: center;
-  color: #800080;
+  color: #433ef1;
   font-weight: bold;
   font-size: 20px;
 `;
@@ -66,7 +66,7 @@ export const UpdateButton = styled.button`
   color: white;
   margin-top: 3%;
   font-size: 15px;
-  background: #800080;
+  background: #433ef1;
   height: 40px;
   border: none;
   border-radius: 10px;
@@ -79,3 +79,4 @@ export const UpdateButton = styled.button`
 export const InputItems = styled.div`
   margin-bottom: 3%;
 `;
+

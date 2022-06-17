@@ -30,8 +30,13 @@ const Modal = ({
             <Close className="bi bi-x-circle-fill"></Close>
           </span>
         </HeaderSection>
-        <hr color="#800080" style={{ marginBottom: "5%" }} />
+        <hr color="#433ef1" style={{ marginBottom: "5%" }} />
         <form>
+          {/* {title === "User" && (
+            <Profile>
+              <input type="file" />
+            </Profile>
+          )} */}
           <InputItems>
             <Label>Name</Label>
             <Input
