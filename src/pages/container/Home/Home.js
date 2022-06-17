@@ -1,5 +1,5 @@
 import React from "react";
-import { NotificationContainer, NotificationManager } from "react-notifications";
+import { NotificationManager } from "../../../react-notifications";
 import Portal from "../Portal/Portal";
 import Signup from "../Signup/Signup";
 
@@ -68,7 +68,6 @@ const Home = () => {
           checkDetails={checkDetails}
         />
       )}
-      <NotificationContainer/>
     </React.Fragment>
   );
 };

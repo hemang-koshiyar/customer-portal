@@ -1,5 +1,5 @@
 import React from "react";
-import { NotificationManager } from "react-notifications";
+import { NotificationManager } from "../../../react-notifications";
 import Login from "../Login/Login";
 import "./Signup.module.css";
 import {
