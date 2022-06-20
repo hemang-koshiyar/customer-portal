@@ -1,5 +1,4 @@
 import styled from "styled-components";
-
 export const ModalBox = styled.div`
   display: none;
   position: fixed;
@@ -8,7 +7,7 @@ export const ModalBox = styled.div`
   overflow: auto;
   z-index: 1;
   width: 100%;
-  height: 100%;
+  height: auto;
   background-color: rgb(0, 0, 0);
   background-color: rgba(0, 0, 0, 0.4);
 `;
@@ -80,3 +79,13 @@ export const InputItems = styled.div`
   margin-bottom: 3%;
 `;
 
+export const Profile = styled.label`
+  display: flex;
+  font-size: 40px;
+  justify-content: center;
+  cursor: pointer;
+`;
+
+export const ProfileInput = styled.input`
+  opacity: 0;
+`;

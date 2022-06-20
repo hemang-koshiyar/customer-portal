@@ -31,7 +31,7 @@ const Signup = ({
   });
   // eslint-disable-next-line
   const mobileReg = /^[0-9\b]+$/;
-  const verifyDetails = (e, ) => {
+  const verifyDetails = (e) => {
     e.preventDefault();
     // eslint-disable-next-line
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -52,7 +52,6 @@ const Signup = ({
     } else {
       setLocalData([...localData, signupData]);
       NotificationManager.success("Signup Successful");
-      setShowActive(true);
       setShowButton({ ...showButton, signup: false, login: true });
     }
   };
@@ -168,12 +167,10 @@ const Signup = ({
               loginData={loginData}
               setLoginData={setLoginData}
               checkDetails={checkDetails}
-              
             />
           )}
         </Form>
       </FormBody>
-      
     </React.Fragment>
   );
 };

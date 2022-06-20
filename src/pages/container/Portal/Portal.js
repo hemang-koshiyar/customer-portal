@@ -35,7 +35,7 @@ import {
   UserButton,
   PageCount,
 } from "./Portal.styled";
-import { NotificationManager } from "react-notifications";
+import { NotificationManager } from "../../../react-notifications";
 
 const Portal = ({ setShowActive, setLocalData }) => {
   const [portalData, setPortalData] = React.useState([]);

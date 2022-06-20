@@ -7,6 +7,8 @@ import {
   Label,
   ModalBox,
   ModalContent,
+  Profile,
+  ProfileInput,
   UpdateButton,
   UpdateTitle,
 } from "./Modal.styled";
@@ -32,11 +34,15 @@ const Modal = ({
         </HeaderSection>
         <hr color="#433ef1" style={{ marginBottom: "5%" }} />
         <form>
-          {/* {title === "User" && (
-            <Profile>
-              <input type="file" />
-            </Profile>
-          )} */}
+          {title === "User" && (
+            <React.Fragment>
+              <Profile for="upload-photo">
+                <i className="bi bi-person-circle"></i>
+              </Profile>
+              <center>Upload Photo</center>
+              <ProfileInput type="file" id="upload-photo" />
+            </React.Fragment>
+          )}
           <InputItems>
             <Label>Name</Label>
             <Input
