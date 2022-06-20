@@ -18,7 +18,6 @@ import {
 const Signup = ({
   signupData,
   setSignUpData,
-  setShowActive,
   loginData,
   localData,
   setLocalData,

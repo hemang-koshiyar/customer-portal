@@ -60,7 +60,6 @@ const Home = () => {
         <Signup
           signupData={signupData}
           setSignUpData={setSignUpData}
-          setShowActive={setShowActive}
           localData={localData}
           setLocalData={setLocalData}
           loginData={loginData}

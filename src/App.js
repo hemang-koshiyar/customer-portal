@@ -4,7 +4,6 @@ import "./react-notifications/lib/notifications.css";
 import { NotificationContainer } from "./react-notifications";
 
 const App = () => {
-  
   return (
     <React.Fragment>
       <Home />

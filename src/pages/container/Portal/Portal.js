@@ -104,11 +104,11 @@ const Portal = ({ setShowActive, setLocalData }) => {
 
   const fetchData = async () => {
     return await fetch(
-      `https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers?view=Grid%20view`,
+      "https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers?view=Grid%20view",
       {
         method: "GET",
         headers: {
-          Authorization: "Bearer keyORrZt08dnm2627",
+          Authorization: "Bearer keyilMg79DLUgJO9q",
         },
       }
     )
@@ -147,26 +147,29 @@ const Portal = ({ setShowActive, setLocalData }) => {
     } else if (userData.Country === "") {
       NotificationManager.warning("Please enter your country!");
     } else {
-      fetch("https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers", {
-        method: "POST",
-        headers: {
-          Authorization: "Bearer keyORrZt08dnm2627",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          records: [
-            {
-              fields: {
-                Name: userData.Name,
-                Email: userData.Email,
-                Phone: userData.Phone,
-                City: userData.City,
-                Country: userData.Country,
+      fetch(
+        "https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers",
+        {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer keyilMg79DLUgJO9q",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            records: [
+              {
+                fields: {
+                  Name: userData.Name,
+                  Email: userData.Email,
+                  Phone: userData.Phone,
+                  City: userData.City,
+                  Country: userData.Country,
+                },
               },
-            },
-          ],
-        }),
-      })
+            ],
+          }),
+        }
+      )
         .then((res) => res.json())
         .then((data) => {
           setPortalData([...portalData, ...data]);
@@ -187,12 +190,16 @@ const Portal = ({ setShowActive, setLocalData }) => {
   };
 
   const deleteAgency = (id) => {
-    fetch(`https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: "Bearer keyORrZt08dnm2627",
-      },
-    }).then((res) => res.status === 200 && fetchData());
+    fetch(
+      `https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: "Bearer keyilMg79DLUgJO9q",
+        },
+      }
+    ).then((res) => res.status === 200 && fetchData());
+    NotificationManager.success("Agency Deleted successfully!");
   };
 
   const updateAgencyData = (data) => {
@@ -223,27 +230,30 @@ const Portal = ({ setShowActive, setLocalData }) => {
     } else if (editData.UCountry === "") {
       NotificationManager.warning("Please enter your country!");
     } else {
-      fetch("https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers", {
-        method: "PATCH",
-        headers: {
-          Authorization: "Bearer keyORrZt08dnm2627",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          records: [
-            {
-              id: editData.id,
-              fields: {
-                Name: editData.UName,
-                Email: editData.UEmail,
-                Phone: editData.UPhone,
-                City: editData.UCity,
-                Country: editData.UCountry,
+      fetch(
+        "https://api.airtable.com/v0/appLAnzH9mo92cmYc/customers",
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: "Bearer keyilMg79DLUgJO9q",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            records: [
+              {
+                id: editData.id,
+                fields: {
+                  Name: editData.UName,
+                  Email: editData.UEmail,
+                  Phone: editData.UPhone,
+                  City: editData.UCity,
+                  Country: editData.UCountry,
+                },
               },
-            },
-          ],
-        }),
-      }).then((res) => res.status === 200 && fetchData());
+            ],
+          }),
+        }
+      ).then((res) => res.status === 200 && fetchData());
       NotificationManager.success("Agency updated successfully!");
       modalRef.current.style.display = "none";
       setShowModal({ update: false });
@@ -282,7 +292,7 @@ const Portal = ({ setShowActive, setLocalData }) => {
       {
         method: "GET",
         headers: {
-          Authorization: "Bearer keyORrZt08dnm2627",
+          Authorization: "Bearer keyilMg79DLUgJO9q",
         },
       }
     )
@@ -596,7 +606,9 @@ const Portal = ({ setShowActive, setLocalData }) => {
             ref={nextBtnRef}
             btnRef={nextBtnRef}
             title="Pagination"
-            disabled={currentPage === totalPages || filteredData.length < 5}
+            disabled={
+              currentPage === totalPages || filteredData.length < showPerPage
+            }
           >
             <i className="bi bi-arrow-right"></i>
           </Button>
