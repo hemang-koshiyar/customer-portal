@@ -173,7 +173,7 @@ const Portal = ({ setShowActive, setLocalData }) => {
           fetchData();
         })
         .catch((err) => console.log(err));
-
+      NotificationManager.success("Agency added successfully!");
       modalRef.current.style.display = "none";
       setShowModal({ add: false });
       setUserData({
@@ -244,7 +244,7 @@ const Portal = ({ setShowActive, setLocalData }) => {
           ],
         }),
       }).then((res) => res.status === 200 && fetchData());
-
+      NotificationManager.success("Agency updated successfully!");
       modalRef.current.style.display = "none";
       setShowModal({ update: false });
     }
@@ -317,6 +317,7 @@ const Portal = ({ setShowActive, setLocalData }) => {
   };
   const debouncedSearch = React.useCallback(debounce(handleChange, 300), []);
   const handleLogout = () => {
+    NotificationManager.success("Logout successful!");
     setShowActive(false);
     localStorage.removeItem("active");
   };
@@ -353,6 +354,7 @@ const Portal = ({ setShowActive, setLocalData }) => {
       localStorage.setItem("users", JSON.stringify(users));
       setLocalData(users);
       localStorage.setItem("active", JSON.stringify(details));
+      NotificationManager.success("User details updated successfully!");
       modalRef.current.display = "none";
       setShowModal({ updateUser: false });
     }
